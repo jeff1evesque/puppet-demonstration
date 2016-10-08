@@ -70,7 +70,7 @@ Vagrant.configure(2) do |config|
 
     ## clean up host files after 'vagrant destroy'
     puppetserver.trigger.after :destroy do
-      run 'rm -rf .ssh/private'
+      run 'rm -rf .ssh'
     end
   end
 
@@ -115,7 +115,7 @@ Vagrant.configure(2) do |config|
 
     ## clean up host files after 'vagrant destroy'
     puppetagent.trigger.after :destroy do
-      run 'rm -rf .ssh/private'
+      run 'rm -rf .ssh'
     end
   end
 end
