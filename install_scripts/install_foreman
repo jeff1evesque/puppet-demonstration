@@ -1,0 +1,114 @@
+#!/bin/bash
+
+## variables
+FOREMAN='1.13'
+
+## set proxy, conditionally set additional variables
+##
+## Note: vagrant on centos7x has '/usr/bin/VBoxClient'
+if [ -f /usr/bin/VBoxClient ]; then
+    PATH_BASH="PATH=\$PATH\:\$HOME/.local/bin"
+    USER='provisioner'
+    BASH_PROFILE="/home/$USER/.bash_profile"
+else
+    ## local variables
+    CORRECT_PROXY='n'
+
+    while [ "${CORRECT_PROXY,,}" != 'y' ] || \
+        [ "${CORRECT_PROXY,,}" != 'yes' ] || \
+        [ "${CORRECT_PROXY,,}" != 'true' ] || \
+        [ "${CORRECT_PROXY,,}" != 'ok' ]; do
+
+        ## acquire proxy ip
+        echo 'Enter your proxy ip > '
+        read PROXY_IP
+
+        ## acquire proxy port
+        echo 'Enter your proxy port > '
+        read PROXY_PORT
+
+        ## verify submission
+        echo "Your proxy: $PROXY_IP:PROXY_PORT"
+        echo 'Is this correct (y) > '
+        read CORRECT_PROXY
+    done
+
+    BASH_PROFILE='/root/.bash_profile'
+    PATH_BASH='PATH=\$PATH\:\$HOME/bin'
+
+    export "http_proxy=http://$PROXY_IP:$PROXY_PORT"
+    export "https_proxy=https://$PROXY_IP:$PROXY_PORT"
+fi
+
+## prompt foreman version
+CORRECT_FOREMAN='n'
+while [ "${CORRECT_FOREMAN,,}" != 'y' ] || \
+    [ "${CORRECT_FOREMAN,,}" != 'yes' ] || \
+    [ "${CORRECT_FOREMAN,,}" != 'true' ] || \
+    [ "${CORRECT_FOREMAN,,}" != 'ok' ]; do
+
+    echo "Install foreman $FOREMAN (y) > "
+    read CORRECT_FOREMAN
+
+    if [ "${CORRECT_FOREMAN,,}" != 'y' ] || \
+        [ "${CORRECT_FOREMAN,,}" != 'yes' ] || \
+        [ "${CORRECT_FOREMAN,,}" != 'true' ] || \
+        [ "${CORRECT_FOREMAN,,}" != 'ok' ]; then
+        echo 'Enter desired foreman version (i.e. \'1.12\', or \'latest\') > '
+        read FOREMAN
+    fi
+
+## download foreman packages with foreman-installer
+##
+## Note: https://theforeman.org/manuals/latest/quickstart_guide.html#QuickstartGuide
+##
+rpm -ivh https://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm
+rpm -ivh https://yum.puppetlabs.com/puppetlabs-release-el-7.noarch.rpm
+yum -y install epel-release https://yum.theforeman.org/releases/"$FOREMAN"/el7/x86_64/foreman-release.rpm
+yum -y install foreman-installer
+
+## configure foreman
+sed -i '1s/.*/127.0.0.1	foreman.sandbox.local/' /etc/hosts
+sed -i '1s/.*/foreman.sandbox.local/' /etc/hostname
+
+## clean metadata, and clean presto
+yum clean all
+
+## ensure valid GPG keys: recent bug that also exists during attempt to install foreman:
+##
+## Note: https://github.com/jeff1evesque/drupal-demonstration/issues/532#issuecomment-250037040
+##
+curl --remote-name --location https://yum.puppetlabs.com/RPM-GPG-KEY-puppet
+gpg --keyid-format 0xLONG --with-fingerprint ./RPM-GPG-KEY-puppet
+rpm --import RPM-GPG-KEY-puppet
+rm RPM-GPG-KEY-puppet
+
+## ensure proper firewalld rules
+firewall-cmd --zone=public --add-service=http
+firewall-cmd --zone=public --add-service=http --permanent
+firewall-cmd --zone=public --add-service=https --permanent
+firewall-cmd --zone=public --add-port=8140/tcp --permanent
+firewall-cmd --reload
+firewall-cmd --zone=public --list-all
+
+## mount /tmp directory without 'noexec'
+##
+## Note: https://docs.puppet.com/puppetserver/2.6/known_issues.html#tmp-directory-mounted-noexec
+##
+mount -o remount,exec /tmp
+chmod 1777 /tmp
+
+## install foreman
+foreman-installer --foreman-admin-password=password
+
+## ensure persistent 'export'
+if ! [ -f /usr/bin/VBoxClient ]; then
+    echo "http_proxy=http://$PROXY_IP:$PROXY_PORT" >> /etc/environment
+    echo "https_proxy=https://$PROXY_IP:$PROXY_PORT" >> /etc/environment
+fi
+
+## allow all puppetagents to connect to puppetserver
+echo '*' >> /etc/puppetlabs/puppet/autosign.conf
+
+## reboot to apply above changes
+sudo reboot
