@@ -49,8 +49,9 @@ Vagrant.configure(2) do |config|
     #
     #        this requirement is not arbitrary, and corresponds to the guest
     #        additions installed on the vagrant base box. A difference between
-    #        the host and guest, will cause the vagrant vm's to be restarted,
-    #        with a possibility of other manual configurations.
+    #        the host and guest, will require each vagrant vm's defined in this
+    #        Vagrantfile, to be restarted after the initial build, with the
+    #        possibility of other manual configurations.
     #
     if ENV['ENV'] == 'CentOS7'
       ## ensure private key
@@ -104,8 +105,9 @@ Vagrant.configure(2) do |config|
     #
     #        this requirement is not arbitrary, and corresponds to the guest
     #        additions installed on the vagrant base box. A difference between
-    #        the host and guest, will cause the vagrant vm's to be restarted,
-    #        with a possibility of other manual configurations.
+    #        the host and guest, will require each vagrant vm's defined in this
+    #        Vagrantfile, to be restarted after the initial build, with the
+    #        possibility of other manual configurations.
     #
     if ENV['ENV'] == 'CentOS7'
       ## ensure private key
