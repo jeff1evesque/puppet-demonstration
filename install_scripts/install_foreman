@@ -10,6 +10,7 @@ if [ -f /usr/bin/VBoxClient ]; then
     PATH_BASH="PATH=\$PATH\:\$HOME/.local/bin"
     USER='provisioner'
     BASH_PROFILE="/home/$USER/.bash_profile"
+
 else
     ## local variables
     CORRECT_PROXY='n'
@@ -57,6 +58,7 @@ while [ "${CORRECT_FOREMAN,,}" != 'y' ] || \
         echo 'Enter desired foreman version (i.e. \'1.12\', or \'latest\') > '
         read FOREMAN
     fi
+done
 
 ## download foreman packages with foreman-installer
 ##
