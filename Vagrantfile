@@ -41,9 +41,7 @@ Vagrant.configure(2) do |config|
       v.customize ['modifyvm', :id, '--memory', '5000']
     end
 
-    ## Every Vagrant development environment requires a box. You can search for
-    #  boxes at https://atlas.hashicorp.com/search.
-    #
+    ## implement custom vagrant box with ssh credentials
     if ENV['ENV'] == 'CentOS7'
       ## ensure private key
       puppetserver.trigger.before :up do
@@ -69,7 +67,6 @@ Vagrant.configure(2) do |config|
     puppetserver.vm.network 'forwarded_port', guest: 80, host: 7070
     puppetserver.vm.network 'forwarded_port', guest: 443, host: 7071
 
-
     ## clean up host files after 'vagrant destroy'
     puppetserver.trigger.after :destroy do
       run 'rm -f centos/.ssh/private'
@@ -84,9 +81,7 @@ Vagrant.configure(2) do |config|
     #
     ENV['ENV'] = 'CentOS7'
 
-    ## Every Vagrant development environment requires a box. You can search for
-    #  boxes at https://atlas.hashicorp.com/search.
-    #
+    ## implement custom vagrant box with ssh credentials
     if ENV['ENV'] == 'CentOS7'
       ## ensure private key
       puppetagent.trigger.before :up do
