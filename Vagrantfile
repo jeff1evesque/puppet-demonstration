@@ -55,7 +55,7 @@ Vagrant.configure(2) do |config|
     if ENV['ENV'] == 'CentOS7'
       ## ensure private key
       puppetserver.trigger.before :up do
-        run 'mkdir .ssh'
+        run 'mkdir -p .ssh'
         run 'curl -o .ssh/private https://raw.githubusercontent.com/jeff1evesque/drupal-demonstration/master/centos7x/.ssh/private'
       end
 
@@ -110,7 +110,7 @@ Vagrant.configure(2) do |config|
     if ENV['ENV'] == 'CentOS7'
       ## ensure private key
       puppetagent.trigger.before :up do
-        run 'mkdir .ssh'
+        run 'mkdir -p .ssh'
         run 'curl -o .ssh/private https://raw.githubusercontent.com/jeff1evesque/drupal-demonstration/master/centos7x/.ssh/private'
       end
 
