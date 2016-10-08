@@ -45,7 +45,8 @@ Vagrant.configure(2) do |config|
     if ENV['ENV'] == 'CentOS7'
       ## ensure private key
       puppetserver.trigger.before :up do
-        run 'curl -o centos7x/.ssh/private https://raw.githubusercontent.com/jeff1evesque/drupal-demonstration/master/centos7x/.ssh/private'
+        run 'mkdir .ssh'
+        run 'curl -o .ssh/private https://raw.githubusercontent.com/jeff1evesque/drupal-demonstration/master/centos7x/.ssh/private'
       end
 
       puppetserver.vm.box         = 'jeff1evesque/centos7x'
@@ -69,7 +70,7 @@ Vagrant.configure(2) do |config|
 
     ## clean up host files after 'vagrant destroy'
     puppetserver.trigger.after :destroy do
-      run 'rm -f centos/.ssh/private'
+      run 'rm -rf .ssh/private'
     end
   end
 
@@ -89,7 +90,8 @@ Vagrant.configure(2) do |config|
     if ENV['ENV'] == 'CentOS7'
       ## ensure private key
       puppetagent.trigger.before :up do
-        run 'curl -o centos7x/.ssh/private https://raw.githubusercontent.com/jeff1evesque/drupal-demonstration/master/centos7x/.ssh/private'
+        run 'mkdir .ssh'
+        run 'curl -o .ssh/private https://raw.githubusercontent.com/jeff1evesque/drupal-demonstration/master/centos7x/.ssh/private'
       end
 
       puppetagent.vm.box         = 'jeff1evesque/centos7x'
@@ -113,7 +115,7 @@ Vagrant.configure(2) do |config|
 
     ## clean up host files after 'vagrant destroy'
     puppetagent.trigger.after :destroy do
-      run 'rm -f centos/.ssh/private'
+      run 'rm -rf .ssh/private'
     end
   end
 end
