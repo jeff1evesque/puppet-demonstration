@@ -73,8 +73,12 @@ Vagrant.configure(2) do |config|
     end
   end
 
-  ## nonprimary machine: puppetagent will not autostart
-  config.vm.define 'puppetagent' do |puppetagent|
+  ## nonprimary machine: puppetagent
+  #
+  #  @autostart, determine if the machine should start automatically on
+  #      'vagrant up'
+  #
+  config.vm.define 'puppetagent', autostart: false do |puppetagent|
     ## Variables
     #
     #  Note: remember to define ENV['ENV']
