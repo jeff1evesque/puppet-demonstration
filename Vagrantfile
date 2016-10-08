@@ -42,6 +42,16 @@ Vagrant.configure(2) do |config|
     end
 
     ## implement custom vagrant box with ssh credentials
+    #
+    #  Note: please ensure vbox, and guest additions on the host is 5.1.2:
+    #
+    #        - http://download.virtualbox.org/virtualbox/5.1.2/
+    #
+    #        this requirement is not arbitrary, and corresponds to the guest
+    #        additions installed on the vagrant base box. A difference between
+    #        the host and guest, will cause the vagrant vm's to be restarted,
+    #        with a possibility of other manual configurations.
+    #
     if ENV['ENV'] == 'CentOS7'
       ## ensure private key
       puppetserver.trigger.before :up do
@@ -87,6 +97,16 @@ Vagrant.configure(2) do |config|
     ENV['ENV'] = 'CentOS7'
 
     ## implement custom vagrant box with ssh credentials
+    #
+    #  Note: please ensure vbox, and guest additions on the host is 5.1.2:
+    #
+    #        - http://download.virtualbox.org/virtualbox/5.1.2/
+    #
+    #        this requirement is not arbitrary, and corresponds to the guest
+    #        additions installed on the vagrant base box. A difference between
+    #        the host and guest, will cause the vagrant vm's to be restarted,
+    #        with a possibility of other manual configurations.
+    #
     if ENV['ENV'] == 'CentOS7'
       ## ensure private key
       puppetagent.trigger.before :up do
