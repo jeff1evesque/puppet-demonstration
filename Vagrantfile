@@ -53,7 +53,7 @@ Vagrant.configure(2) do |config|
       puppetserver.vm.box_version = '1.0.1'
       $ssh_username               = 'provisioner'
       $ssh_password               = 'vagrant-provision'
-      $privateKey                 = 'centos7x/.ssh/private'
+      $privateKey                 = '.ssh/private'
     end
 
     ## ensure pty is used for provisioning (useful for vagrant base box)
@@ -98,7 +98,7 @@ Vagrant.configure(2) do |config|
       puppetagent.vm.box_version = '1.0.1'
       $ssh_username              = 'provisioner'
       $ssh_password              = 'vagrant-provision'
-      $privateKey                = 'centos7x/.ssh/private'
+      $privateKey                = '.ssh/private'
     end
 
     ## ensure pty is used for provisioning (useful for vagrant base box)
