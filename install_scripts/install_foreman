@@ -101,7 +101,6 @@ firewall-cmd --zone=public --list-all
 ##
 ## Note: https://docs.puppet.com/puppetserver/2.6/known_issues.html#tmp-directory-mounted-noexec
 ##
-##
 ## Note: vagrant on centos7x has '/usr/bin/VBoxClient'
 ##
 if ! [ -f /usr/bin/VBoxClient ]; then
