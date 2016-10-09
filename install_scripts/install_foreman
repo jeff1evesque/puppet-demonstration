@@ -31,7 +31,7 @@ else
         read PROXY_PORT
 
         ## verify submission
-        echo "Your proxy: $PROXY_IP:PROXY_PORT"
+        echo "Your proxy: $PROXY_IP:$PROXY_PORT"
         echo 'Is this correct (y) > '
         read CORRECT_PROXY
     done
@@ -47,7 +47,7 @@ fi
 ##
 ## Note: vagrant on centos7x has '/usr/bin/VBoxClient'
 ##
-if [ -f /usr/bin/VBoxClient ]; then
+if ! [ -f /usr/bin/VBoxClient ]; then
 
     CORRECT_FOREMAN='n'
     while [ "${CORRECT_FOREMAN,,}" != 'y' ] || \
