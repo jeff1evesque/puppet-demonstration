@@ -78,6 +78,15 @@ if ! [ -f /usr/bin/VBoxClient ]; then
 
 fi
 
+## ensure valid GPG keys: recent bug that also exists during attempt to install foreman:
+##
+## Note: https://github.com/jeff1evesque/drupal-demonstration/issues/532#issuecomment-250037040
+##
+curl --remote-name --location https://yum.puppetlabs.com/RPM-GPG-KEY-puppet
+gpg --keyid-format 0xLONG --with-fingerprint ./RPM-GPG-KEY-puppet
+rpm --import RPM-GPG-KEY-puppet
+rm RPM-GPG-KEY-puppet
+
 ## download foreman packages with foreman-installer
 ##
 ## Note: https://theforeman.org/manuals/latest/quickstart_guide.html#QuickstartGuide
@@ -94,19 +103,11 @@ sed -i '1s/.*/foreman.sandbox.local/' /etc/hostname
 ## clean metadata, and clean presto
 yum clean all
 
-## ensure valid GPG keys: recent bug that also exists during attempt to install foreman:
-##
-## Note: https://github.com/jeff1evesque/drupal-demonstration/issues/532#issuecomment-250037040
-##
-curl --remote-name --location https://yum.puppetlabs.com/RPM-GPG-KEY-puppet
-gpg --keyid-format 0xLONG --with-fingerprint ./RPM-GPG-KEY-puppet
-rpm --import RPM-GPG-KEY-puppet
-rm RPM-GPG-KEY-puppet
-
 ## ensure proper firewalld rules
-firewall-cmd --zone=public --add-service=http
 firewall-cmd --zone=public --add-service=http --permanent
 firewall-cmd --zone=public --add-service=https --permanent
+firewall-cmd --permanent --add-port=80/tcp --permanent
+firewall-cmd --permanent --add-port=443/tcp --permanent
 firewall-cmd --zone=public --add-port=8140/tcp --permanent
 firewall-cmd --reload
 firewall-cmd --zone=public --list-all
