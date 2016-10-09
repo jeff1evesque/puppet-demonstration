@@ -62,6 +62,13 @@ if ! [ -f /usr/bin/VBoxClient ]; then
     echo "http_proxy=http://$PROXY_IP:$PROXY_PORT" >> /etc/environment
     echo "https_proxy=https://$PROXY_IP:$PROXY_PORT" >> /etc/environment
 
+    ## mount /tmp directory without 'noexec'
+    ##
+    ## Note: https://docs.puppet.com/puppetserver/2.6/known_issues.html#tmp-directory-mounted-noexec
+    ##
+    mount -o remount,exec /tmp
+    chmod 1777 /tmp
+
 fi
 
 ## download foreman packages with foreman-installer
@@ -96,17 +103,6 @@ firewall-cmd --zone=public --add-service=https --permanent
 firewall-cmd --zone=public --add-port=8140/tcp --permanent
 firewall-cmd --reload
 firewall-cmd --zone=public --list-all
-
-## mount /tmp directory without 'noexec'
-##
-## Note: https://docs.puppet.com/puppetserver/2.6/known_issues.html#tmp-directory-mounted-noexec
-##
-## Note: vagrant on centos7x has '/usr/bin/VBoxClient'
-##
-if ! [ -f /usr/bin/VBoxClient ]; then
-    mount -o remount,exec /tmp
-    chmod 1777 /tmp
-fi
 
 ## install foreman
 foreman-installer --foreman-admin-password=password
