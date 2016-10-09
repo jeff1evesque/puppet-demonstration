@@ -7,16 +7,12 @@ FOREMAN='1.13'
 ##
 ## Note: vagrant on centos7x has '/usr/bin/VBoxClient'
 ##
-if [ -f /usr/bin/VBoxClient ]; then
+if ! [ -f /usr/bin/VBoxClient ]; then
 
-    PATH_BASH="PATH=\$PATH\:\$HOME/.local/bin"
-    USER='provisioner'
-    BASH_PROFILE="/home/$USER/.bash_profile"
-
-else
     ## local variables
     CORRECT_PROXY='n'
 
+    ## prompt proxy configurations
     while [ "${CORRECT_PROXY,,}" != 'y' ] || \
         [ "${CORRECT_PROXY,,}" != 'yes' ] || \
         [ "${CORRECT_PROXY,,}" != 'true' ] || \
@@ -36,19 +32,14 @@ else
         read CORRECT_PROXY
     done
 
-    BASH_PROFILE='/root/.bash_profile'
-    PATH_BASH='PATH=\$PATH\:\$HOME/bin'
-
+    ## setup proxy
     export "http_proxy=http://$PROXY_IP:$PROXY_PORT"
     export "https_proxy=https://$PROXY_IP:$PROXY_PORT"
-fi
 
-## prompt foreman version
-##
-## Note: vagrant on centos7x has '/usr/bin/VBoxClient'
-##
-if ! [ -f /usr/bin/VBoxClient ]; then
-
+    ## prompt foreman version
+    ##
+    ## Note: vagrant on centos7x has '/usr/bin/VBoxClient'
+    ##
     CORRECT_FOREMAN='n'
     while [ "${CORRECT_FOREMAN,,}" != 'y' ] || \
         [ "${CORRECT_FOREMAN,,}" != 'yes' ] || \
@@ -66,6 +57,10 @@ if ! [ -f /usr/bin/VBoxClient ]; then
             read FOREMAN
         fi
     done
+
+    ## ensure persistent proxy
+    echo "http_proxy=http://$PROXY_IP:$PROXY_PORT" >> /etc/environment
+    echo "https_proxy=https://$PROXY_IP:$PROXY_PORT" >> /etc/environment
 
 fi
 
@@ -106,17 +101,16 @@ firewall-cmd --zone=public --list-all
 ##
 ## Note: https://docs.puppet.com/puppetserver/2.6/known_issues.html#tmp-directory-mounted-noexec
 ##
-mount -o remount,exec /tmp
-chmod 1777 /tmp
+##
+## Note: vagrant on centos7x has '/usr/bin/VBoxClient'
+##
+if ! [ -f /usr/bin/VBoxClient ]; then
+    mount -o remount,exec /tmp
+    chmod 1777 /tmp
+fi
 
 ## install foreman
 foreman-installer --foreman-admin-password=password
-
-## ensure persistent 'export'
-if ! [ -f /usr/bin/VBoxClient ]; then
-    echo "http_proxy=http://$PROXY_IP:$PROXY_PORT" >> /etc/environment
-    echo "https_proxy=https://$PROXY_IP:$PROXY_PORT" >> /etc/environment
-fi
 
 ## allow all puppetagents to connect to puppetserver
 echo '*' >> /etc/puppetlabs/puppet/autosign.conf
