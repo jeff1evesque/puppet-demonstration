@@ -62,11 +62,18 @@ if ! [ -f /usr/bin/VBoxClient ]; then
     echo "http_proxy=http://$PROXY_IP:$PROXY_PORT" >> /etc/environment
     echo "https_proxy=https://$PROXY_IP:$PROXY_PORT" >> /etc/environment
 
-    ## mount /tmp directory without 'noexec'
+    ## mount /tmp directory without 'noexec' (temporary on initial build)
     ##
     ## Note: https://docs.puppet.com/puppetserver/2.6/known_issues.html#tmp-directory-mounted-noexec
     ##
     mount -o remount,exec /tmp
+
+    ## mount /tmp directory without 'noexec' (persistent on reboot)
+    ##
+    ## Note: https://docs.puppet.com/puppetserver/2.6/known_issues.html#tmp-directory-mounted-noexec
+    ##
+    awk '{if ( $2 ~ /\/tmp/ ) {sub(/noexec/, "", $4); sub(/^,/, "", $4); sub(/,$/, "", $4); print $1 "\t" $2 "\t" $3 "\t" $4 "\t" $5 "\t" $6 "\t"} else print $0;}' /etc/fstab > /home/temp.txt
+    mv /home/temp.txt /etc/fstab
     chmod 1777 /tmp
 
 fi
