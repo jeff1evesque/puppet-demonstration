@@ -68,4 +68,6 @@ fi
 sed -i "s,$PATH_BASH,$PATH_BASH:$PATH_PUPPET,g" "$BASH_PROFILE"
 
 ## reboot to apply above changes
-sudo reboot
+if ! [ -f /vagrant/.ssh/*_vagrant.private ]; then
+    sudo reboot
+fi
