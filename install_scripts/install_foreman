@@ -5,9 +5,10 @@ FOREMAN='1.13'
 
 ## set proxy, conditionally set additional variables
 ##
-## Note: vagrant on centos7x has '/usr/bin/VBoxClient'
+## Note: only a vagrant implementation should have ssh key(s) named with
+##       the '_vagrant.private' suffix .
 ##
-if ! [ -f /usr/bin/VBoxClient ]; then
+if ! [ -f /vagrant/.ssh/*_vagrant.private ]; then
 
     ## local variables
     CORRECT_PROXY='n'

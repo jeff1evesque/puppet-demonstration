@@ -57,14 +57,14 @@ Vagrant.configure(2) do |config|
       ## ensure private key
       puppetserver.trigger.before :up do
         run 'mkdir -p .ssh'
-        run 'curl -o .ssh/puppetserver.private https://raw.githubusercontent.com/jeff1evesque/drupal-demonstration/master/centos7x/.ssh/private'
+        run 'curl -o .ssh/puppetserver_vagrant.private https://raw.githubusercontent.com/jeff1evesque/drupal-demonstration/master/centos7x/.ssh/private'
       end
 
       puppetserver.vm.box         = 'jeff1evesque/centos7x'
       puppetserver.vm.box_version = '1.0.1'
       $ssh_username               = 'provisioner'
       $ssh_password               = 'vagrant-provision'
-      $privateKey                 = '.ssh/puppetserver.private'
+      $privateKey                 = '.ssh/puppetserver_vagrant.private'
     end
 
     ## ensure pty is used for provisioning (useful for vagrant base box)
@@ -81,7 +81,7 @@ Vagrant.configure(2) do |config|
 
     ## clean up host files after 'vagrant destroy'
     puppetserver.trigger.after :destroy do
-      run 'rm -rf .ssh/puppetserver.private'
+      run 'rm -rf .ssh/puppetserver_vagrant.private'
     end
   end
 
@@ -113,14 +113,14 @@ Vagrant.configure(2) do |config|
       ## ensure private key
       puppetagent.trigger.before :up do
         run 'mkdir -p .ssh'
-        run 'curl -o .ssh/puppetagent.private https://raw.githubusercontent.com/jeff1evesque/drupal-demonstration/master/centos7x/.ssh/private'
+        run 'curl -o .ssh/puppetagent_vagrant.private https://raw.githubusercontent.com/jeff1evesque/drupal-demonstration/master/centos7x/.ssh/private'
       end
 
       puppetagent.vm.box         = 'jeff1evesque/centos7x'
       puppetagent.vm.box_version = '1.0.1'
       $ssh_username              = 'provisioner'
       $ssh_password              = 'vagrant-provision'
-      $privateKey                = '.ssh/puppetagent.private'
+      $privateKey                = '.ssh/puppetagent_vagrant.private'
     end
 
     ## ensure pty is used for provisioning (useful for vagrant base box)
@@ -137,7 +137,7 @@ Vagrant.configure(2) do |config|
 
     ## clean up host files after 'vagrant destroy'
     puppetagent.trigger.after :destroy do
-      run 'rm -rf .ssh/puppetagent.private'
+      run 'rm -rf .ssh/puppetagent_vagrant.private'
     end
   end
 end
