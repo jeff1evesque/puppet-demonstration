@@ -8,7 +8,7 @@ FOREMAN='1.13'
 ## Note: only a vagrant implementation should have ssh key(s) named with
 ##       the '_vagrant.private' suffix .
 ##
-if ! [ -f /vagrant/.ssh/*._vagrant.private ]; then
+if ! [ -f /vagrant/.ssh/*_vagrant.private ]; then
 
     ## local variables
     CORRECT_PROXY='n'
