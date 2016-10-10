@@ -5,8 +5,8 @@ FOREMAN='1.13'
 
 ## set proxy, conditionally set additional variables
 ##
-## Note: only a vagrant implementation should have an ssh key suffixed
-##       with '_vagrant.private'.
+## Note: only a vagrant implementation should have ssh key(s) named with
+##       the '_vagrant.private' suffix .
 ##
 if ! [ -f /vagrant/.ssh/*._vagrant.private ]; then
 
