@@ -51,7 +51,7 @@ else
 fi
 
 ## puppet installation
-if [ "$OS_VERSION" lt 7 ]; then
+if [ "$OS_VERSION" -lt 7 ]; then
     rpm -ivh "$PUPPET_6_RPM"
     sudo yum install -y puppet
 else
