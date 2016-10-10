@@ -11,7 +11,7 @@ PATH_PUPPET='/opt/puppetlabs/bin'
 ## Note: only a vagrant implementation should have ssh key(s) named with
 ##       the '_vagrant.private' suffix .
 ##
-if [ -f /vagrant/.ssh/*_vagrant.private ]; then
+if [ -f /vagrant/.ssh/puppetagent_vagrant.private ]; then
 
     PATH_BASH="PATH=\$PATH\:\$HOME/.local/bin"
     USER='provisioner'
@@ -51,7 +51,7 @@ else
 fi
 
 ## puppet installation
-if [ "$OS_VERSION" < 7 ]; then
+if [ "$OS_VERSION" lt 7 ]; then
     rpm -ivh "$PUPPET_6_RPM"
     sudo yum install -y puppet
 else
