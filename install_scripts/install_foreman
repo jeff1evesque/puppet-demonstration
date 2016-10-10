@@ -120,4 +120,6 @@ foreman-installer --foreman-admin-password=password
 echo '*' >> /etc/puppetlabs/puppet/autosign.conf
 
 ## reboot to apply above changes
-sudo reboot
+if ! [ -f /vagrant/.ssh/*_vagrant.private ]; then
+    sudo reboot
+fi
