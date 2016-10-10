@@ -8,8 +8,8 @@ PATH_PUPPET='/opt/puppetlabs/bin'
 
 ## set proxy, conditionally set additional variables
 ##
-## Note: only a vagrant implementation should have ssh key(s) named with
-##       the '_vagrant.private' suffix .
+## Note: only a vagrant implementation should have a private ssh key named
+##       'puppetagent_vagrant.private'.
 ##
 if [ -f /vagrant/.ssh/puppetagent_vagrant.private ]; then
 
@@ -30,20 +30,20 @@ else
 
         ## acquire proxy ip
         echo 'Enter your proxy ip > '
-        read PROXY_IP
+        read -r PROXY_IP
 
         ## acquire proxy port
         echo 'Enter your proxy port > '
-        read PROXY_PORT
+        read -r PROXY_PORT
 
         ## verify submission
         echo "Your proxy: $PROXY_IP:$PROXY_PORT"
         echo 'Is this correct (y) > '
-        read CORRECT_PROXY
+        read -r CORRECT_PROXY
     done
 
     BASH_PROFILE='/root/.bash_profile'
-    PATH_BASH='PATH=\$PATH\:\$HOME/bin'
+    PATH_BASH="PATH=\$PATH\:\$HOME/bin"
 
     export http_proxy=http://"$PROXY_IP":"$PROXY_PORT"
     export https_proxy=https://"$PROXY_IP":"$PROXY_PORT"
@@ -68,6 +68,10 @@ fi
 sed -i "s,$PATH_BASH,$PATH_BASH:$PATH_PUPPET,g" "$BASH_PROFILE"
 
 ## reboot to apply above changes
-if ! [ -f /vagrant/.ssh/*_vagrant.private ]; then
+##
+## Note: only a vagrant implementation should have a private ssh key named
+##       'puppetagent_vagrant.private'.
+##
+if ! [ -f /vagrant/.ssh/puppetagent_vagrant.private ]; then
     sudo reboot
 fi
