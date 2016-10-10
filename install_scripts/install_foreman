@@ -7,7 +7,7 @@ FOREMAN='1.13'
 ##
 ## Note: vagrant on centos7x has '/usr/bin/VBoxClient'
 ##
-if ! [ -f /usr/bin/VBoxClient ]; then
+if ! [ -f /vagrant/.ssh/*._vagrant.private ]; then
 
     ## local variables
     CORRECT_PROXY='n'
