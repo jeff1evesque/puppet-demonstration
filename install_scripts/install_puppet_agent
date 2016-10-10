@@ -13,7 +13,7 @@ PATH_PUPPET='/opt/puppetlabs/bin'
 ##
 if [ -f /vagrant/.ssh/*_vagrant.private ]; then
 
-    PATH_BASH='PATH=\$PATH\:\$HOME/.local/bin'
+    PATH_BASH="PATH=\$PATH\:\$HOME/.local/bin"
     USER='provisioner'
     BASH_PROFILE="/home/$USER/.bash_profile"
 
