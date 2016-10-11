@@ -83,6 +83,9 @@ Vagrant.configure(2) do |config|
     puppetserver.trigger.after :destroy do
       run 'rm -rf .ssh/puppetserver_vagrant.private'
     end
+
+    ## shell provision: install foreman (with puppetserver)
+    puppetserver.vm.provision :shell, path: 'install_scripts/install_foreman'
   end
 
   ## nonprimary machine: puppetagent
@@ -139,6 +142,9 @@ Vagrant.configure(2) do |config|
     puppetagent.trigger.after :destroy do
       run 'rm -rf .ssh/puppetagent_vagrant.private'
     end
+
+    ## shell provision: install puppetagent
+    puppetagent.vm.provision :shell, path: 'install_scripts/install_puppet_agent'
   end
 end
 
