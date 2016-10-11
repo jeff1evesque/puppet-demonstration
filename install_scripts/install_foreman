@@ -87,6 +87,7 @@ curl --remote-name --location https://yum.puppetlabs.com/RPM-GPG-KEY-puppet
 gpg --keyid-format 0xLONG --with-fingerprint ./RPM-GPG-KEY-puppet
 rpm --import RPM-GPG-KEY-puppet
 rm RPM-GPG-KEY-puppet
+echo 'Puppet GPG updated.'
 
 ## download foreman packages with foreman-installer
 ##
@@ -94,15 +95,19 @@ rm RPM-GPG-KEY-puppet
 ##
 rpm -ivh https://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm
 rpm -ivh https://yum.puppetlabs.com/puppetlabs-release-el-7.noarch.rpm
+echo 'Puppet rpm packages downloaded.'
 yum -y install epel-release https://yum.theforeman.org/releases/"$FOREMAN"/el7/x86_64/foreman-release.rpm
 yum -y install foreman-installer
+echo 'Installed foreman-installer.'
 
 ## configure foreman
 sed -i '1s/.*/127.0.0.1	foreman.sandbox.local/' /etc/hosts
 sed -i '1s/.*/foreman.sandbox.local/' /etc/hostname
+echo 'Configured /etc/hosts, and /etc/hostname.'
 
 ## clean metadata, and clean presto
 yum clean all
+echo 'Cleaned metadata, and presto.'
 
 ## ensure proper firewalld rules
 firewall-cmd --zone=public --add-service=http --permanent
@@ -112,9 +117,11 @@ firewall-cmd --permanent --add-port=443/tcp --permanent
 firewall-cmd --zone=public --add-port=8140/tcp --permanent
 firewall-cmd --reload
 firewall-cmd --zone=public --list-all
+echo 'Firewalld rules implemented.'
 
 ## install foreman
 foreman-installer --foreman-admin-password=password
+echo 'Foreman installed.'
 
 ## allow all puppetagents to connect to puppetserver
 echo '*' >> /etc/puppetlabs/puppet/autosign.conf
