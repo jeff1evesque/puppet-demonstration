@@ -2,6 +2,7 @@
 
 ## variables
 FOREMAN='1.13'
+HOSTNAME='foreman.sandbox.local'
 
 ## set proxy, conditionally set additional variables
 ##
@@ -100,10 +101,12 @@ yum -y install epel-release https://yum.theforeman.org/releases/"$FOREMAN"/el7/x
 yum -y install foreman-installer
 echo 'Installed foreman-installer.'
 
-## configure foreman
-sed -i '1s/.*/127.0.0.1	foreman.sandbox.local/'	/etc/hosts
-sed -i '1s/.*/foreman.sandbox.local/'' /etc/hostname
-echo 'Configured /etc/hosts, and /etc/hostname.'
+## configure foreman hostname
+sed -i "1s/.*/127.0.0.1	$HOSTNAME/"	/etc/hosts
+sed -i "1s/.*/$HOSTNAME/" /etc/hostname
+hostname "$HOSTNAME"
+/etc/init.d/network restart
+echo "Configured hostname to $HOSTNAME"
 
 ## clean metadata, and clean presto
 yum clean all
