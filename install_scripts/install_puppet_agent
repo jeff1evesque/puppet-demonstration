@@ -34,17 +34,14 @@ else
         [ "${CORRECT_PROXY,,}" != 'ok' ]; do
 
         ## acquire proxy ip
-        echo 'Enter your proxy ip > '
-        read -r PROXY_IP
+        read -p 'Enter your proxy ip > ' PROXY_IP
 
         ## acquire proxy port
-        echo 'Enter your proxy port > '
-        read -r PROXY_PORT
+        read -p 'Enter your proxy port > ' PROXY_PORT
 
         ## verify submission
         echo "Your proxy: $PROXY_IP:$PROXY_PORT"
-        echo 'Is this correct (y) > '
-        read -r CORRECT_PROXY
+        read -p 'Is this correct (y) > ' CORRECT_PROXY
     done
 
     BASH_PROFILE='/root/.bash_profile'
