@@ -100,9 +100,12 @@ yum -y install epel-release https://yum.theforeman.org/releases/"$FOREMAN"/el7/x
 yum -y install foreman-installer
 echo 'Installed foreman-installer.'
 
+## get hostname
+HOSTNAME=$(hostnamectl --static)
+
 ## configure foreman
-sed -i '1s/.*/127.0.0.1	foreman.sandbox.local/' /etc/hosts
-sed -i '1s/.*/foreman.sandbox.local/' /etc/hostname
+sed -i "1s/.*/127.0.0.1	$HOSTNAME/"	/etc/hosts
+sed -i "1s/.*/$HOSTNAME/" /etc/hostname
 echo 'Configured /etc/hosts, and /etc/hostname.'
 
 ## clean metadata, and clean presto
