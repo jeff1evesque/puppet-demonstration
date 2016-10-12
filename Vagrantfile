@@ -88,8 +88,11 @@ Vagrant.configure(2) do |config|
     puppetserver.vm.provision :shell, path: 'install_scripts/install_foreman'
 
     ## public static ip
+    ##
+    ## Note: since the 'install_foreman' defines /etc/hostname, and /etc/hosts,
+    ##       defining config.vm.host_name is superfluous.
+    ##
     puppetserver.vm.network :public_network, ip: '192.168.0.1'
-    puppetserver.vm.hostname = 'foreman.sandbox.local'
   end
 
   ## nonprimary machine: puppetagent
