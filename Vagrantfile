@@ -86,6 +86,9 @@ Vagrant.configure(2) do |config|
 
     ## shell provision: install foreman (with puppetserver)
     puppetserver.vm.provision :shell, path: 'install_scripts/install_foreman'
+
+    ## public static ip
+    puppetserver.vm.network :public_network, ip: '192.168.0.1'
   end
 
   ## nonprimary machine: puppetagent
