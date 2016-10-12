@@ -99,7 +99,7 @@ echo 'Installed foreman-installer.'
 ## configure foreman hostname
 sed -i "1s/.*/127.0.0.1	$HOSTNAME/"	/etc/hosts
 sed -i "1s/.*/$HOSTNAME/" /etc/hostname
-hostname "$HOSTNAME"
+hostnamectl set-hostname "$HOSTNAME"
 /etc/init.d/network restart
 echo "Configured hostname to $HOSTNAME"
 
