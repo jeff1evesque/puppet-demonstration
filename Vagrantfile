@@ -92,7 +92,7 @@ Vagrant.configure(2) do |config|
     ## Note: since the 'install_foreman' defines /etc/hostname, and /etc/hosts,
     ##       defining config.vm.host_name is superfluous.
     ##
-    puppetserver.vm.network :public_network, ip: '192.168.0.1', :netmask => '255.255.0.0', :bridge => 'eth0'
+    puppetserver.vm.network :private_network, ip: '192.168.0.1'
   end
 
   ## nonprimary machine: puppetagent
