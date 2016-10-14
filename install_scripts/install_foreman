@@ -2,7 +2,7 @@
 
 ## variables
 FOREMAN='1.13'
-HOST_IP='192.168.0.1'
+HOST_IP='192.168.0.10'
 HOSTNAME='foreman.sandbox.local'
 
 ## set proxy, conditionally set additional variables
