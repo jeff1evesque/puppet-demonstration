@@ -87,10 +87,18 @@ Vagrant.configure(2) do |config|
     ## shell provision: install foreman (with puppetserver)
     puppetserver.vm.provision :shell, path: 'install_scripts/install_foreman'
 
-    ## public static ip
+    ## internal network:  virtual machines can communicate between each other
+    ##                    and with the hosting system but not outside.
+    ##
+    ## @ip, this should correspond to the value defined in the /etc/hosts,
+    ##     which is defined from 'install_foreman'
     ##
     ## Note: since the 'install_foreman' defines /etc/hostname, and /etc/hosts,
     ##       defining config.vm.host_name is superfluous.
+    ##
+    ## Note: By default, private networks are host-only networks, because those
+    ##       are the easiest to work with. However, internal networks can be
+    ##       enabled as well.
     ##
     puppetserver.vm.network :private_network, ip: '192.168.0.1'
   end
