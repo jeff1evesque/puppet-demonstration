@@ -96,7 +96,7 @@ Vagrant.configure(2) do |config|
     ##       are the easiest to work with. However, internal networks can be
     ##       enabled as well.
     ##
-    puppetserver.vm.network :private_network, ip: '192.168.0.1'
+    puppetserver.vm.network :private_network, ip: '192.168.0.10'
   end
 
   ## nonprimary machine: puppetagent
@@ -160,7 +160,7 @@ Vagrant.configure(2) do |config|
     ##       are the easiest to work with. However, internal networks can be
     ##       enabled as well.
     ##
-    puppetagent.vm.network :private_network, ip: '192.168.0.2'
+    puppetagent.vm.network :private_network, ip: '192.168.0.11'
   end
 end
 
