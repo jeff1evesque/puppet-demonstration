@@ -111,8 +111,13 @@ yum clean all
 echo 'Cleaned metadata, and presto.'
 
 ## ensure proper firewalld rules
+##
+## Note: https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux_OpenStack_Platform/3/html/Deployment_Guide_Foreman_Technology_Preview/chap-Installing_Foreman.html#Configuring_the_Firewall9
+##
 firewall-cmd --zone=public --add-service=http --permanent
 firewall-cmd --zone=public --add-service=https --permanent
+firewall-cmd --permanent --add-port=53/tcp --permanent
+firewall-cmd --permanent --add-port=69/tcp --permanent
 firewall-cmd --permanent --add-port=80/tcp --permanent
 firewall-cmd --permanent --add-port=443/tcp --permanent
 firewall-cmd --zone=public --add-port=8140/tcp --permanent
