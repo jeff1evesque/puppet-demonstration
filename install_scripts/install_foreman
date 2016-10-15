@@ -124,6 +124,9 @@ firewall-cmd --reload
 firewall-cmd --zone=public --list-all
 echo 'Firewalld rules implemented.'
 
+## allow selinux rule for httpd
+setsebool -P httpd_read_user_content 1
+
 ## install foreman
 foreman-installer --foreman-admin-password=password
 echo 'Foreman installed.'
