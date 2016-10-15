@@ -116,6 +116,7 @@ echo 'Cleaned metadata, and presto.'
 ##
 firewall-cmd --zone=public --add-service=http --permanent
 firewall-cmd --zone=public --add-service=https --permanent
+firewall-cmd --permanent --add-port=53/tcp --permanent
 firewall-cmd --permanent --add-port=69/tcp --permanent
 firewall-cmd --permanent --add-port=80/tcp --permanent
 firewall-cmd --permanent --add-port=443/tcp --permanent
@@ -125,7 +126,7 @@ firewall-cmd --zone=public --list-all
 echo 'Firewalld rules implemented.'
 
 ## allow selinux rule for httpd
-setsebool -P httpd_read_user_content 1
+sudo setsebool -P httpd_read_user_content 1
 
 ## install foreman
 foreman-installer --foreman-admin-password=password
