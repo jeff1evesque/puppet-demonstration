@@ -75,9 +75,6 @@ Vagrant.configure(2) do |config|
     puppetserver.ssh.username         = $ssh_username
     puppetserver.ssh.password         = $ssh_password
 
-    ## port forward guest to host machine
-    puppetserver.vm.network 'forwarded_port', guest: 443, host: 7071
-
     ## clean up host files after 'vagrant destroy'
     puppetserver.trigger.after :destroy do
       run 'rm -rf .ssh/puppetserver_vagrant.private'
