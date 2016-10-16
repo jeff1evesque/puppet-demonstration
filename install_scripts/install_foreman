@@ -2,7 +2,6 @@
 
 ## variables
 FOREMAN='1.13'
-HOST_IP='192.168.0.10'
 HOSTNAME='foreman.sandbox.local'
 
 ## set proxy, conditionally set additional variables
@@ -100,7 +99,6 @@ echo 'Installed foreman-installer.'
 
 ## configure foreman hostname
 sed -i "1s/.*/127.0.0.1	$HOSTNAME/"	/etc/hosts
-echo "$HOST_IP	$HOSTNAME" >> /etc/hosts
 sed -i "1s/.*/$HOSTNAME/" /etc/hostname
 hostnamectl set-hostname "$HOSTNAME"
 sudo /etc/init.d/network restart
