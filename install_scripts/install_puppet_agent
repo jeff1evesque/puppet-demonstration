@@ -1,9 +1,15 @@
 #!/bin/bash
 
 ## variables
-OS_VERSION=$(grep -oE '[0-9]+\.[0-9]+' /etc/redhat-release)
-PUPPET_6_RPM='http://yum.puppetlabs.com/puppetlabs-release-el-6.noarch.rpm'
-PUPPET_7_RPM='https://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm'
+##
+## @HOST_FQDN, value corresponds to the assignment set in 'install_foreman',
+##     when defining /etc/hosts, and /etc/hostname.
+##
+HOST_IP='192.168.0.10'
+HOST_FQDN='foreman.sandbox.local'
+OS_VERSION=$(rpm -qa \*-release | grep -Ei "oracle|redhat|centos" | cut -d"-" -f3)
+PUPPET_6_RPM='puppetlabs-release-el-6.noarch'
+PUPPET_7_RPM='puppetlabs-release-pc1-el-7.noarch'
 PATH_PUPPET='/opt/puppetlabs/bin'
 
 ## set proxy, conditionally set additional variables
@@ -29,17 +35,14 @@ else
         [ "${CORRECT_PROXY,,}" != 'ok' ]; do
 
         ## acquire proxy ip
-        echo 'Enter your proxy ip > '
-        read -r PROXY_IP
+        read -p 'Enter your proxy ip > ' PROXY_IP
 
         ## acquire proxy port
-        echo 'Enter your proxy port > '
-        read -r PROXY_PORT
+        read -p 'Enter your proxy port > ' PROXY_PORT
 
         ## verify submission
         echo "Your proxy: $PROXY_IP:$PROXY_PORT"
-        echo 'Is this correct (y) > '
-        read -r CORRECT_PROXY
+        read -p 'Is this correct (y) > ' CORRECT_PROXY
     done
 
     BASH_PROFILE='/root/.bash_profile'
@@ -50,14 +53,15 @@ else
 
 fi
 
-## puppet installation
+## install puppetagent
 if [ "$OS_VERSION" -lt 7 ]; then
-    rpm -ivh "$PUPPET_6_RPM"
-    sudo yum install -y puppet
+    rpm -e "$PUPPET_6_RPM"
+    rpm -ivh http://yum.puppetlabs.com/"$PUPPET_6_RPM".rpm
 else
-    rpm -Uvh "$PUPPET_7_RPM"
-    sudo yum install -y puppet-agent
+    rpm -e "$PUPPET_7_RPM"
+    rpm -Uvh https://yum.puppetlabs.com/"$PUPPET_7_RPM".rpm
 fi
+sudo yum install -y puppet
 echo 'Puppet agent installed.'
 
 ## ensure system path has puppet reference
@@ -68,6 +72,17 @@ echo 'Puppet agent installed.'
 ##
 sed -i "s,$PATH_BASH,$PATH_BASH:$PATH_PUPPET,g" "$BASH_PROFILE"
 echo 'System path configured for puppet.'
+
+# add reference to puppetserver
+echo "$HOST_IP	$HOST_FQDN" >> /etc/hosts
+sudo /etc/init.d/network restart
+
+## get hostname
+HOSTNAME=$(hostnamectl --static)
+
+## assign puppet agent configuration
+sudo /opt/puppetlabs/bin/puppet config set server "$HOST_FQDN"
+sudo /opt/puppetlabs/bin/puppet config set certname "$HOSTNAME"
 
 ## reboot to apply above changes
 ##

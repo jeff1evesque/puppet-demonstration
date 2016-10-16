@@ -75,10 +75,6 @@ Vagrant.configure(2) do |config|
     puppetserver.ssh.username         = $ssh_username
     puppetserver.ssh.password         = $ssh_password
 
-    ## port forward guest to host machine
-    puppetserver.vm.network 'forwarded_port', guest: 80, host: 7070
-    puppetserver.vm.network 'forwarded_port', guest: 443, host: 7071
-
     ## clean up host files after 'vagrant destroy'
     puppetserver.trigger.after :destroy do
       run 'rm -rf .ssh/puppetserver_vagrant.private'
@@ -86,6 +82,21 @@ Vagrant.configure(2) do |config|
 
     ## shell provision: install foreman (with puppetserver)
     puppetserver.vm.provision :shell, path: 'install_scripts/install_foreman'
+
+    ## internal network:  virtual machines can communicate between each other
+    ##                    and with the hosting system but not outside.
+    ##
+    ## @ip, corresponds to the value defined in the /etc/hosts, which is
+    ##     defined from 'install_foreman'.
+    ##
+    ## Note: since the 'install_foreman' defines /etc/hostname, and /etc/hosts,
+    ##       defining config.vm.host_name is superfluous.
+    ##
+    ## Note: By default, private networks are host-only networks, because those
+    ##       are the easiest to work with. However, internal networks can be
+    ##       enabled as well.
+    ##
+    puppetserver.vm.network :private_network, ip: '192.168.0.10'
   end
 
   ## nonprimary machine: puppetagent
@@ -134,10 +145,6 @@ Vagrant.configure(2) do |config|
     puppetagent.ssh.username         = $ssh_username
     puppetagent.ssh.password         = $ssh_password
 
-    ## port forward guest to host machine
-    puppetagent.vm.network 'forwarded_port', guest: 80, host: 8070
-    puppetagent.vm.network 'forwarded_port', guest: 443, host: 8071
-
     ## clean up host files after 'vagrant destroy'
     puppetagent.trigger.after :destroy do
       run 'rm -rf .ssh/puppetagent_vagrant.private'
@@ -145,6 +152,15 @@ Vagrant.configure(2) do |config|
 
     ## shell provision: install puppetagent
     puppetagent.vm.provision :shell, path: 'install_scripts/install_puppet_agent'
+
+    ## internal network:  virtual machines can communicate between each other
+    ##                    and with the hosting system but not outside.
+    ##
+    ## Note: By default, private networks are host-only networks, because those
+    ##       are the easiest to work with. However, internal networks can be
+    ##       enabled as well.
+    ##
+    puppetagent.vm.network :private_network, ip: '192.168.0.11'
   end
 end
 

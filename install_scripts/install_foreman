@@ -2,6 +2,7 @@
 
 ## variables
 FOREMAN='1.13'
+HOSTNAME='foreman.sandbox.local'
 
 ## set proxy, conditionally set additional variables
 ##
@@ -20,17 +21,14 @@ if ! [ -f /vagrant/.ssh/puppetserver_vagrant.private ]; then
         [ "${CORRECT_PROXY,,}" != 'ok' ]; do
 
         ## acquire proxy ip
-        echo 'Enter your proxy ip > '
-        read -r PROXY_IP
+        read -p 'Enter your proxy ip > ' PROXY_IP
 
         ## acquire proxy port
-        echo 'Enter your proxy port > '
-        read -r PROXY_PORT
+        read -p 'Enter your proxy port > ' PROXY_PORT
 
         ## verify submission
         echo "Your proxy: $PROXY_IP:$PROXY_PORT"
-        echo 'Is this correct (y) > '
-        read -r CORRECT_PROXY
+        read -p 'Is this correct (y) > ' CORRECT_PROXY
     done
 
     ## setup proxy
@@ -47,15 +45,13 @@ if ! [ -f /vagrant/.ssh/puppetserver_vagrant.private ]; then
         [ "${CORRECT_FOREMAN,,}" != 'true' ] || \
         [ "${CORRECT_FOREMAN,,}" != 'ok' ]; do
 
-        echo "Install foreman $FOREMAN (y) > "
-        read -r CORRECT_FOREMAN
+        read -p "Install foreman $FOREMAN (y) > " CORRECT_FOREMAN
 
         if [ "${CORRECT_FOREMAN,,}" != 'y' ] || \
             [ "${CORRECT_FOREMAN,,}" != 'yes' ] || \
             [ "${CORRECT_FOREMAN,,}" != 'true' ] || \
             [ "${CORRECT_FOREMAN,,}" != 'ok' ]; then
-            echo "Enter desired foreman version (i.e. '$FOREMAN', or 'latest') > "
-            read -r FOREMAN
+            read -p "Enter desired foreman version (i.e. '$FOREMAN', or 'latest') > " FOREMAN
         fi
     done
 
@@ -94,30 +90,40 @@ echo 'Puppet GPG updated.'
 ## Note: https://theforeman.org/manuals/latest/quickstart_guide.html#QuickstartGuide
 ##
 rpm -ivh https://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm
-rpm -ivh https://yum.puppetlabs.com/puppetlabs-release-el-7.noarch.rpm
+yum clean all
+yum makecache
 echo 'Puppet rpm packages downloaded.'
 yum -y install epel-release https://yum.theforeman.org/releases/"$FOREMAN"/el7/x86_64/foreman-release.rpm
 yum -y install foreman-installer
 echo 'Installed foreman-installer.'
 
-## configure foreman
-sed -i '1s/.*/127.0.0.1	foreman.sandbox.local/' /etc/hosts
-sed -i '1s/.*/foreman.sandbox.local/' /etc/hostname
-echo 'Configured /etc/hosts, and /etc/hostname.'
+## configure foreman hostname
+sed -i "1s/.*/127.0.0.1	$HOSTNAME/"	/etc/hosts
+sed -i "1s/.*/$HOSTNAME/" /etc/hostname
+hostnamectl set-hostname "$HOSTNAME"
+sudo /etc/init.d/network restart
+echo "Configured hostname to $HOSTNAME"
 
 ## clean metadata, and clean presto
 yum clean all
 echo 'Cleaned metadata, and presto.'
 
 ## ensure proper firewalld rules
+##
+## Note: https://theforeman.org/manuals/1.9/#firewall-configuration
+##
 firewall-cmd --zone=public --add-service=http --permanent
 firewall-cmd --zone=public --add-service=https --permanent
+firewall-cmd --permanent --add-port=69/tcp --permanent
 firewall-cmd --permanent --add-port=80/tcp --permanent
 firewall-cmd --permanent --add-port=443/tcp --permanent
 firewall-cmd --zone=public --add-port=8140/tcp --permanent
 firewall-cmd --reload
 firewall-cmd --zone=public --list-all
 echo 'Firewalld rules implemented.'
+
+## allow selinux rule for httpd
+sudo setsebool -P httpd_read_user_content 1
 
 ## install foreman
 foreman-installer --foreman-admin-password=password
