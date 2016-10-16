@@ -5,6 +5,7 @@
 ## @HOST_FQDN, value corresponds to the assignment set in 'install_foreman',
 ##     when defining /etc/hosts, and /etc/hostname.
 ##
+HOST_IP='192.168.0.10'
 HOST_FQDN='foreman.sandbox.local'
 OS_VERSION=$(rpm -qa \*-release | grep -Ei "oracle|redhat|centos" | cut -d"-" -f3)
 PUPPET_6_RPM='puppetlabs-release-el-6.noarch'
@@ -71,6 +72,9 @@ echo 'Puppet agent installed.'
 ##
 sed -i "s,$PATH_BASH,$PATH_BASH:$PATH_PUPPET,g" "$BASH_PROFILE"
 echo 'System path configured for puppet.'
+
+# add reference to puppetserver
+echo "$HOST_IP	HOST_FQDN" >> /etc/hosts
 
 ## get hostname
 HOSTNAME=$(hostnamectl --static)
