@@ -74,7 +74,8 @@ sed -i "s,$PATH_BASH,$PATH_BASH:$PATH_PUPPET,g" "$BASH_PROFILE"
 echo 'System path configured for puppet.'
 
 # add reference to puppetserver
-echo "$HOST_IP	HOST_FQDN" >> /etc/hosts
+echo "$HOST_IP	$HOST_FQDN" >> /etc/hosts
+sudo /etc/init.d/network restart
 
 ## get hostname
 HOSTNAME=$(hostnamectl --static)
