@@ -70,7 +70,6 @@ echo 'Puppet agent installed.'
 ##        Any instances of ',' between the defined delimiters will need to be
 ##        escaped.
 ##
-echo "$PATH"
 [[ ! $PATH_PUPPET =~ $PATH ]] && sed -i "s,$PATH_BASH,$PATH_BASH:$PATH_PUPPET,g" "$BASH_PROFILE"
 echo 'System path configured for puppet.'
 
