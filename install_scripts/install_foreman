@@ -15,9 +15,9 @@ if ! [ -f /vagrant/.ssh/puppetserver_vagrant.private ]; then
     CORRECT_PROXY='n'
 
     ## prompt proxy configurations
-    while [ "${CORRECT_PROXY,,}" != 'y' ] || \
-        [ "${CORRECT_PROXY,,}" != 'yes' ] || \
-        [ "${CORRECT_PROXY,,}" != 'true' ] || \
+    while [ "${CORRECT_PROXY,,}" != 'y' ] && \
+        [ "${CORRECT_PROXY,,}" != 'yes' ] && \
+        [ "${CORRECT_PROXY,,}" != 'true' ] && \
         [ "${CORRECT_PROXY,,}" != 'ok' ]; do
 
         ## acquire proxy ip
@@ -40,16 +40,16 @@ if ! [ -f /vagrant/.ssh/puppetserver_vagrant.private ]; then
     ## Note: vagrant on centos7x has '/usr/bin/VBoxClient'
     ##
     CORRECT_FOREMAN='n'
-    while [ "${CORRECT_FOREMAN,,}" != 'y' ] || \
-        [ "${CORRECT_FOREMAN,,}" != 'yes' ] || \
-        [ "${CORRECT_FOREMAN,,}" != 'true' ] || \
+    while [ "${CORRECT_FOREMAN,,}" != 'y' ] && \
+        [ "${CORRECT_FOREMAN,,}" != 'yes' ] && \
+        [ "${CORRECT_FOREMAN,,}" != 'true' ] && \
         [ "${CORRECT_FOREMAN,,}" != 'ok' ]; do
 
         read -p "Install foreman $FOREMAN (y) > " CORRECT_FOREMAN
 
-        if [ "${CORRECT_FOREMAN,,}" != 'y' ] || \
-            [ "${CORRECT_FOREMAN,,}" != 'yes' ] || \
-            [ "${CORRECT_FOREMAN,,}" != 'true' ] || \
+        if [ "${CORRECT_FOREMAN,,}" != 'y' ] && \
+            [ "${CORRECT_FOREMAN,,}" != 'yes' ] && \
+            [ "${CORRECT_FOREMAN,,}" != 'true' ] && \
             [ "${CORRECT_FOREMAN,,}" != 'ok' ]; then
             read -p "Enter desired foreman version (i.e. '$FOREMAN', or 'latest') > " FOREMAN
         fi
