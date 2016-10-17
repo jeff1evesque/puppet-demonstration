@@ -29,9 +29,9 @@ else
     CORRECT_PROXY='n'
 
     ## prompt proxy configurations
-    while [ "${CORRECT_PROXY,,}" != 'y' ] || \
-        [ "${CORRECT_PROXY,,}" != 'yes' ] || \
-        [ "${CORRECT_PROXY,,}" != 'true' ] || \
+    while [ "${CORRECT_PROXY,,}" != 'y' ] && \
+        [ "${CORRECT_PROXY,,}" != 'yes' ] && \
+        [ "${CORRECT_PROXY,,}" != 'true' ] && \
         [ "${CORRECT_PROXY,,}" != 'ok' ]; do
 
         ## acquire proxy ip
