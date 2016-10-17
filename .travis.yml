@@ -4,8 +4,10 @@ sudo: required
 #
 #  @trusty-backports, allows additional packages (i.e. shellcheck) to be installed
 #
-#  Note: in the future centos can be used within docker containers, should unit
-#        tests be required.
+#  Note: in the future, centos can be used within docker containers, should
+#        unit tests be required:
+#
+#        - https://github.com/jeff1evesque/machine-learning/blob/0.4/.travis.yml#L101-L112
 #
 install:
   - sudo add-apt-repository "deb http://archive.ubuntu.com/ubuntu/ trusty-backports restricted main universe"
