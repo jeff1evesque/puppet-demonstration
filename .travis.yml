@@ -13,9 +13,11 @@ install:
   - sudo add-apt-repository "deb http://archive.ubuntu.com/ubuntu/ trusty-backports restricted main universe"
   - sudo apt-get update
   - sudo apt-get install shellcheck=0.3.3-1~ubuntu14.04.1
+  - gem install mdl -v 0.3.1
 
 ## implement linting
 script:
   # lint codebase
   - find . -type f -exec grep -l '^#!/bin/bash' {} + | xargs shellcheck
   - find . -name '*.sh' -type f -exec shellcheck {} \;
+  - mdl . --style test/lint/markdown.rb
