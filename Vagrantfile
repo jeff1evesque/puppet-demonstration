@@ -61,7 +61,7 @@ Vagrant.configure(2) do |config|
       end
 
       puppetserver.vm.box         = 'jeff1evesque/centos7x'
-      puppetserver.vm.box_version = '1.0.1'
+      puppetserver.vm.box_version = '1.0.2'
       $ssh_username               = 'provisioner'
       $ssh_password               = 'vagrant-provision'
       $privateKey                 = '.ssh/puppetserver_vagrant.private'
@@ -131,7 +131,7 @@ Vagrant.configure(2) do |config|
       end
 
       puppetagent.vm.box         = 'jeff1evesque/centos7x'
-      puppetagent.vm.box_version = '1.0.1'
+      puppetagent.vm.box_version = '1.0.2'
       $ssh_username              = 'provisioner'
       $ssh_password              = 'vagrant-provision'
       $privateKey                = '.ssh/puppetagent_vagrant.private'
