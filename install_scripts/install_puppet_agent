@@ -48,8 +48,8 @@ else
     BASH_PROFILE='/root/.bash_profile'
     PATH_BASH="PATH=\$PATH\:\$HOME/bin"
 
-    export http_proxy=http://"$PROXY_IP":"$PROXY_PORT"
-    export https_proxy=https://"$PROXY_IP":"$PROXY_PORT"
+    export http_proxy=http://"$PROXY_IP:$PROXY_PORT"
+    export https_proxy=https://"$PROXY_IP:$PROXY_PORT"
 
 fi
 
