@@ -1,0 +1,18 @@
+sudo: required
+
+## install packages for linting
+#
+#  @trusty-backports, allows additional packages (i.e. shellcheck) to be installed
+#
+#  Note: in the future centos can be used within docker containers, should unit
+#        tests be required.
+#
+install:
+  - sudo add-apt-repository "deb http://archive.ubuntu.com/ubuntu/ trusty-backports restricted main universe"
+  - sudo apt-get install shellcheck=0.3.3-1~ubuntu14.04.1
+
+## implement linting
+script:
+  # lint codebase
+  - find . -type f -exec grep -l '^#!/bin/bash' {} + | xargs shellcheck
+  - find . -name '*.sh' -type f -exec shellcheck {} \;
