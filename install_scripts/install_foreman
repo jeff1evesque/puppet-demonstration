@@ -31,9 +31,13 @@ if ! [ -f /vagrant/.ssh/puppetserver_vagrant.private ]; then
         read -p 'Is this correct (y) > ' CORRECT_PROXY
     done
 
-    ## setup proxy
+    ## setup proxy: lasts until reboot
     export "http_proxy=http://$PROXY_IP:$PROXY_PORT"
     export "https_proxy=https://$PROXY_IP:$PROXY_PORT"
+
+    ## setup proxy: persistent after reboot
+    echo "http_proxy=http://$PROXY_IP:$PROXY_PORT" >> /etc/environment
+    echo "https_proxy=https://$PROXY_IP:$PROXY_PORT" >> /etc/environment
 
     ## prompt foreman version
     ##
@@ -54,10 +58,6 @@ if ! [ -f /vagrant/.ssh/puppetserver_vagrant.private ]; then
             read -p "Enter desired foreman version (i.e. '$FOREMAN', or 'latest') > " FOREMAN
         fi
     done
-
-    ## ensure persistent proxy
-    echo "http_proxy=http://$PROXY_IP:$PROXY_PORT" >> /etc/environment
-    echo "https_proxy=https://$PROXY_IP:$PROXY_PORT" >> /etc/environment
 
     ## mount /tmp directory without 'noexec' (temporary on initial build)
     ##
