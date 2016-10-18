@@ -6,12 +6,12 @@ This repository is a simple demonstration of a virtualized environment
  / [puppetagent](https://docs.puppet.com/puppet/latest/reference/man/agent.html) ecosystem,
  contained within [Centos 7x](https://www.centos.org/) operating systems.
  Specifically, a custom vagrant [base box](https://www.vagrantup.com/docs/boxes/base.html),
- has been created, from [minimal iso](http://isoredirect.centos.org/centos/7/isos/x86_64/CentOS-7-x86_64-Minimal-1511.iso),
+ has been created from a [minimal iso](http://isoredirect.centos.org/centos/7/isos/x86_64/CentOS-7-x86_64-Minimal-1511.iso),
  which vagrant provisions via the [`Vagrantfile`](https://github.com/jeff1evesque/puppet-demonstration/blob/master/Vagrantfile),
  using corresponding [install scripts](https://github.com/jeff1evesque/puppet-demonstration/tree/master/install_scripts).
 
  When vagrant completes provisioning, a puppetserver, with a corresponding
- [foreman](https://theforeman.org/) gui is available on the host via the ip
+ [foreman](https://theforeman.org/) gui, is available on the host via the ip
  `192.168.0.10`, which can be used to manage various puppetagent nodes:
 
 ![Foreman Login](https://cloud.githubusercontent.com/assets/2907085/19436102/4c40ca40-943c-11e6-9554-cd13f363569c.PNG)
@@ -90,6 +90,19 @@ read -p 'Enter your proxy port > ' PROXY_PORT
 
 **Note:** the vagrant implementation does not require a proxy, which is why the
  same install script, does not prompt, nor make such definitions.
+
+The [install scripts](https://github.com/jeff1evesque/puppet-demonstration/tree/master/install_scripts)
+ can be easily run on corresponding virtual machines as follows:
+
+```bash
+# virtual machine for puppetserver
+./install_foreman`
+# virual machine for puppetagent
+./install_puppet_agent
+```
+
+**Note:** when running the above [install scripts](https://github.com/jeff1evesque/puppet-demonstration/tree/master/install_scripts)
+ on non-vagrant environments, simply follow the bash prompts.
 
 ## Testing / Execution
 
