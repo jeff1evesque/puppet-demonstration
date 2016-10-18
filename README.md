@@ -36,11 +36,12 @@ Fork this project in your GitHub account.  Then, clone your repository, with
 
 ## Installation
 
-In order to proceed with the installation for this project, two dependencies
+In order to proceed with the installation for this project, three dependencies
  need to be installed:
 
 - [Vagrant](https://www.vagrantup.com/)
-- [Virtualbox](https://www.virtualbox.org/) (with extension pack)
+- [Virtualbox 5.1.2](http://download.virtualbox.org/virtualbox/5.1.2/)
+- [Extension Pack 5.1.2](http://download.virtualbox.org/virtualbox/5.1.2/)
 
 Once the necessary dependencies have been installed, execute the following
  command to build the virtual environment:
