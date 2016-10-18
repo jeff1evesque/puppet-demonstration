@@ -109,9 +109,9 @@ Notice: Applied catalog in 0.02 seconds
 ```
 
 As shown in the [introduction](https://github.com/jeff1evesque/puppet-demonstration/blob/master/README.md#puppet-demonstration--),
- the foreman gui can be used, to manage the puppetserver, and corresponding
- puppetagent nodes. Specifically, foreman can be accessed on the host machine,
- via an [internal network](https://github.com/jeff1evesque/puppet-demonstration/blob/3145a783e3822e465419606e8ff96899bd2b116e/Vagrantfile#L99),
+ the foreman gui can be used, to manage corresponding puppetagent nodes.
+ Specifically, foreman can be accessed on the host machine, in conjunction with
+ the puppetserver, via an [internal network](https://github.com/jeff1evesque/puppet-demonstration/blob/3145a783e3822e465419606e8ff96899bd2b116e/Vagrantfile#L99),
  on `192.168.0.10`.
 
 The above [install scripts](https://github.com/jeff1evesque/puppet-demonstration/tree/master/install_scripts)
