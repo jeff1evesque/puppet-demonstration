@@ -1,6 +1,6 @@
 # Puppet Demonstration [![Build Status](https://travis-ci.org/jeff1evesque/puppet-demonstration.svg?branch=master)](https://travis-ci.org/jeff1evesque/puppet-demonstration)
 
-This repository is a simple demonstration of a virtualized environment
+This repository is a simple demonstration of virtualized environments
  ([vagrant](https://www.vagrantup.com/) + [virtualbox](https://www.virtualbox.org/)),
  tailored to exhibit the [puppetserver](https://docs.puppet.com/puppetserver/latest/services_master_puppetserver.html)
  / [puppetagent](https://docs.puppet.com/puppet/latest/reference/man/agent.html) ecosystem,
