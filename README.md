@@ -46,7 +46,7 @@ In order to proceed with the installation for this project, three dependencies
 - [Extension Pack 5.1.2](http://download.virtualbox.org/virtualbox/5.1.2/) (required)
 
 Once the necessary dependencies have been installed, execute the following
- command to build the virtual environment:
+ command to build the puppetserver:
 
 ```bash
 cd /path/to/machine-learning/
@@ -75,7 +75,9 @@ vagrant up puppetagent
 ## Testing / Execution
 
 Once the [installation](https://github.com/jeff1evesque/puppet-demonstration/blob/master/README.md#installation)
- requirements are complete, the `puppetagent` can be synchronized to the `puppetserver`:
+ requirements are complete, the `puppetserver` can provision various
+ `puppetagent` nodes, using the foreman gui, as a middle layer between the two.
+ However, each `puppetagent` must be synchronized to the `puppetserver`:
 
 ```bash
 $ vagrant ssh puppetagent
@@ -105,9 +107,8 @@ Notice: Applied catalog in 0.02 seconds
 ```
 
 As shown in the [introduction](https://github.com/jeff1evesque/puppet-demonstration/blob/master/README.md#puppet-demonstration--),
- the foreman gui can be used, to manage corresponding puppetagent nodes.
- Specifically, foreman can be accessed on the host machine, in conjunction with
- the puppetserver, via an [internal network](https://github.com/jeff1evesque/puppet-demonstration/blob/3145a783e3822e465419606e8ff96899bd2b116e/Vagrantfile#L99),
+ the foreman gui can be used to manage puppetagent nodes, via an
+ [internal network](https://github.com/jeff1evesque/puppet-demonstration/blob/3145a783e3822e465419606e8ff96899bd2b116e/Vagrantfile#L99),
  on `192.168.0.10`. Additionally, the above [install scripts](https://github.com/jeff1evesque/puppet-demonstration/tree/master/install_scripts)
  can be run in vagrant, as well as production-like systems. However, non-
 vagrant environments, require some assumptions. For example,
