@@ -15,7 +15,7 @@ install:
   - sudo apt-get install shellcheck=0.3.3-1~ubuntu14.04.1
   - gem install mdl -v 0.3.1
 
-## implement linting
+## implement linting / unit tests
 script:
   # lint codebase
   - find . -type f -exec grep -l '^#!/bin/bash' {} + | xargs shellcheck
