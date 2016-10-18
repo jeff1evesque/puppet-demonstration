@@ -110,9 +110,9 @@ The [install scripts](https://github.com/jeff1evesque/puppet-demonstration/tree/
 ## Testing / Execution
 
 Once the [installation](https://github.com/jeff1evesque/puppet-demonstration/blob/master/README.md#installation)
- requirements are complete, the `puppetserver` can provision various
- `puppetagent` nodes, using the foreman gui, as a middle layer between the two.
- However, each `puppetagent` must be synchronized to the `puppetserver`:
+ is complete, the `puppetserver` can provision various `puppetagent` nodes,
+ using the foreman gui, as a middle layer between the two. However, each
+ `puppetagent` must be synchronized to the `puppetserver`:
 
 ```bash
 $ vagrant ssh puppetagent
