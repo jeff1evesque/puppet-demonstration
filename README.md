@@ -95,7 +95,7 @@ The [install scripts](https://github.com/jeff1evesque/puppet-demonstration/tree/
 
 ```bash
 # virtual machine for puppetserver
-./install_foreman`
+./install_foreman
 # virual machine for puppetagent
 ./install_puppet_agent
 ```
