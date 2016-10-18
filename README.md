@@ -10,8 +10,8 @@ This repository is a simple demonstration of virtualized environments
  which vagrant provisions via the [`Vagrantfile`](https://github.com/jeff1evesque/puppet-demonstration/blob/master/Vagrantfile),
  using corresponding [install scripts](https://github.com/jeff1evesque/puppet-demonstration/tree/master/install_scripts).
  Though, it is recommended that Centos 7x is used for both the puppetserver,
- and additional puppetagents, the install scripts are flexible enough to allow
- puppetagent's to be contained within [Centos 6x](https://wiki.centos.org/Download)
+ and additional puppetagents, the [install scripts](https://github.com/jeff1evesque/puppet-demonstration/tree/master/install_scripts)
+ are flexible enough to allow puppetagent's to reside in [Centos 6x](https://wiki.centos.org/Download)
  operating systems.
 
  When vagrant completes provisioning, a puppetserver, with a corresponding
