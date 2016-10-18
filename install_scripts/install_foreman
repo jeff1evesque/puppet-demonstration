@@ -40,9 +40,6 @@ if ! [ -f /vagrant/.ssh/puppetserver_vagrant.private ]; then
     echo "https_proxy=https://$PROXY_IP:$PROXY_PORT" >> /etc/environment
 
     ## prompt foreman version
-    ##
-    ## Note: vagrant on centos7x has '/usr/bin/VBoxClient'
-    ##
     CORRECT_FOREMAN='n'
     while [ "${CORRECT_FOREMAN,,}" != 'y' ] && \
         [ "${CORRECT_FOREMAN,,}" != 'yes' ] && \
