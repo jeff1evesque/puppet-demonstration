@@ -11,8 +11,8 @@ This repository is a simple demonstration of a virtualized environment
  using corresponding [install scripts](https://github.com/jeff1evesque/puppet-demonstration/tree/master/install_scripts).
 
  When vagrant completes provisioning, a puppetserver, with a corresponding
- [foreman](https://theforeman.org/) gui is available on the host on `192.168.0.10`,
- and can be used to manage various puppetagent nodes:
+ [foreman](https://theforeman.org/) gui is available on the host via the ip
+ `192.168.0.10`, which can be used to manage various puppetagent nodes:
 
 ![Foreman Login](https://cloud.githubusercontent.com/assets/2907085/19436102/4c40ca40-943c-11e6-9554-cd13f363569c.PNG)
 
