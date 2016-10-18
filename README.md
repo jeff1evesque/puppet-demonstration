@@ -115,13 +115,10 @@ As shown in the [introduction](https://github.com/jeff1evesque/puppet-demonstrat
  on `192.168.0.10`.
 
 The above [install scripts](https://github.com/jeff1evesque/puppet-demonstration/tree/master/install_scripts)
- can be run in vagrant, as well as production-like systems. However, for
- non-vagrant environments, some assumptions are required.
-
-For example, the `install_foreman` bash script, assumes the containing virtual
- machine has a defined [proxy](https://en.wikipedia.org/wiki/Proxy_server).
- This is indicated by the following [snippet](https://github.com/jeff1evesque/puppet-demonstration/blob/7f08b038c1d9b54c2a464e6f8dc7c85834e25d2b/install_scripts/install_foreman#L23-L27),
- from the corresponding install script:
+ can be run in vagrant, as well as production-like systems. However, non-
+vagrant environments, require some assumptions. For example,
+ [`install_foreman`](https://github.com/jeff1evesque/puppet-demonstration/blob/7f08b038c1d9b54c2a464e6f8dc7c85834e25d2b/install_scripts/install_foreman#L23-L27)
+ assumes the containing virtual machine, has a defined [proxy](https://en.wikipedia.org/wiki/Proxy_server):
 
 ```bash
 ...
