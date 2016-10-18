@@ -72,6 +72,25 @@ cd /path/to/machine-learning/
 vagrant up puppetagent
 ```
 
+Though, the implemented [install scripts](https://github.com/jeff1evesque/puppet-demonstration/tree/master/install_scripts)
+ can be used to provision vagrant, it can be run in production-like systems.
+ However, some assumptions are required. For example,
+ [`install_foreman`](https://github.com/jeff1evesque/puppet-demonstration/blob/7f08b038c1d9b54c2a464e6f8dc7c85834e25d2b/install_scripts/install_foreman#L23-L27)
+ assumes the containing virtual machine, has a defined [proxy](https://en.wikipedia.org/wiki/Proxy_server):
+
+```bash
+...
+## acquire proxy ip
+read -p 'Enter your proxy ip > ' PROXY_IP
+
+## acquire proxy port
+read -p 'Enter your proxy port > ' PROXY_PORT
+...
+```
+
+**Note:** in the vagrant implementation, a proxy is not required, hence the
+ same install script, does not prompt, nor make such definitions.
+
 ## Testing / Execution
 
 Once the [installation](https://github.com/jeff1evesque/puppet-demonstration/blob/master/README.md#installation)
@@ -106,24 +125,6 @@ Info: Creating state file /opt/puppetlabs/puppet/cache/state/state.yaml
 Notice: Applied catalog in 0.02 seconds
 ```
 
-As shown in the [introduction](https://github.com/jeff1evesque/puppet-demonstration/blob/master/README.md#puppet-demonstration--),
- the foreman gui can be used to manage puppetagent nodes, via an
+Now, the foreman gui can be used to manage the corresponding agent node, via an
  [internal network](https://github.com/jeff1evesque/puppet-demonstration/blob/3145a783e3822e465419606e8ff96899bd2b116e/Vagrantfile#L99),
- on `192.168.0.10`. Additionally, the above [install scripts](https://github.com/jeff1evesque/puppet-demonstration/tree/master/install_scripts)
- can be run in vagrant, as well as production-like systems. However, non-
-vagrant environments, require some assumptions. For example,
- [`install_foreman`](https://github.com/jeff1evesque/puppet-demonstration/blob/7f08b038c1d9b54c2a464e6f8dc7c85834e25d2b/install_scripts/install_foreman#L23-L27)
- assumes the containing virtual machine, has a defined [proxy](https://en.wikipedia.org/wiki/Proxy_server):
-
-```bash
-...
-## acquire proxy ip
-read -p 'Enter your proxy ip > ' PROXY_IP
-
-## acquire proxy port
-read -p 'Enter your proxy port > ' PROXY_PORT
-...
-```
-
-**Note:** in the vagrant implementation, a proxy is not required, hence the
- same install script, does not prompt, nor make such definitions.
+ on `192.168.0.10`.
