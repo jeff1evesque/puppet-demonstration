@@ -42,8 +42,8 @@ In order to proceed with the installation for this project, three dependencies
  need to be installed:
 
 - [Vagrant](https://www.vagrantup.com/)
-- [Virtualbox 5.1.2](http://download.virtualbox.org/virtualbox/5.1.2/) (or higher version)
-- [Extension Pack 5.1.2](http://download.virtualbox.org/virtualbox/5.1.2/) (required version)
+- [Virtualbox 5.1.2](http://download.virtualbox.org/virtualbox/5.1.2/) (or higher)
+- [Extension Pack 5.1.2](http://download.virtualbox.org/virtualbox/5.1.2/) (required)
 
 Once the necessary dependencies have been installed, execute the following
  command to build the virtual environment:
