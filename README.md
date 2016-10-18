@@ -66,7 +66,8 @@ Depending on the network speed, the build can take between 10-15 minutes. So,
 
 When `vagrant up` is complete, a `puppetserver` will be installed on the
  [primary machine](https://github.com/jeff1evesque/puppet-demonstration/blob/3145a783e3822e465419606e8ff96899bd2b116e/Vagrantfile#L31-L32).
- Next, a `puppetagent` needs to be built:
+ Next, a single `puppetagent`, can be configured to the latter `puppetserver`,
+ as follows:
 
 ```bash
 cd /path/to/machine-learning/
