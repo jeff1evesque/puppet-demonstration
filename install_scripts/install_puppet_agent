@@ -85,8 +85,8 @@ else
 fi
 
 ## assign puppet agent configuration
-puppet config set server "$HOST_FQDN"
-puppet config set certname "$HOSTNAME"
+/opt/puppetlabs/bin/puppet config set server "$HOST_FQDN"
+/opt/puppetlabs/bin/puppet config set certname "$HOSTNAME"
 
 ## reboot to apply above changes
 ##
