@@ -2,9 +2,9 @@
 
 This repository is a simple demonstration of a virtualized environment
  ([vagrant](https://www.vagrantup.com/) + [virtualbox](https://www.virtualbox.org/)),
- tailored for a [puppetserver](https://docs.puppet.com/puppetserver/latest/services_master_puppetserver.html)
- / [puppetagent](https://docs.puppet.com/puppet/latest/reference/man/agent.html)
- contained within a [Centos 7x](https://www.centos.org/) operating system.
+ tailored to exhibit the [puppetserver](https://docs.puppet.com/puppetserver/latest/services_master_puppetserver.html)
+ / [puppetagent](https://docs.puppet.com/puppet/latest/reference/man/agent.html) ecosystem,
+ contained within [Centos 7x](https://www.centos.org/) operating systems.
  Specifically, a custom vagrant [base box](https://www.vagrantup.com/docs/boxes/base.html),
  has been created, from [minimal iso](http://isoredirect.centos.org/centos/7/isos/x86_64/CentOS-7-x86_64-Minimal-1511.iso),
  which vagrant provisions via the [`Vagrantfile`](https://github.com/jeff1evesque/puppet-demonstration/blob/master/Vagrantfile),
