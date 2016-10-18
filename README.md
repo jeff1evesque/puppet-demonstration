@@ -64,8 +64,7 @@ Depending on the network speed, the build can take between 10-15 minutes. So,
 
 When `vagrant up` completes, a `puppetserver` will be installed on the
  [primary machine](https://github.com/jeff1evesque/puppet-demonstration/blob/3145a783e3822e465419606e8ff96899bd2b116e/Vagrantfile#L31-L32).
- Next, a single `puppetagent`, can be configured, to the latter `puppetserver`,
- as follows:
+ Next, a single `puppetagent`, can be configured, to the latter `puppetserver`:
 
 ```bash
 cd /path/to/machine-learning/
@@ -92,7 +91,7 @@ read -p 'Enter your proxy port > ' PROXY_PORT
  same install script, does not prompt, nor make such definitions.
 
 The [install scripts](https://github.com/jeff1evesque/puppet-demonstration/tree/master/install_scripts)
- can easily be run on corresponding virtual machines as follows:
+ can easily be run on corresponding virtual machines:
 
 ```bash
 # virtual machine for puppetserver
