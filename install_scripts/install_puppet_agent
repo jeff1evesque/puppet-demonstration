@@ -56,7 +56,7 @@ fi
 ## install puppetagent
 if [ "$OS_VERSION" -lt 7 ]; then
     rpm -e "$PUPPET_6_RPM"
-    rpm -ivh http://yum.puppetlabs.com/"$PUPPET_6_RPM".rpm
+    rpm -ivh https://yum.puppetlabs.com/"$PUPPET_6_RPM".rpm
 else
     rpm -e "$PUPPET_7_RPM"
     rpm -Uvh https://yum.puppetlabs.com/"$PUPPET_7_RPM".rpm
@@ -78,11 +78,15 @@ echo "$HOST_IP	$HOST_FQDN" >> /etc/hosts
 sudo /etc/init.d/network restart
 
 ## get hostname
-HOSTNAME=$(hostnamectl --static)
+if [ "$OS_VERSION" -lt 7 ]; then
+    HOSTNAME=$(hostname)
+else
+    HOSTNAME=$(hostnamectl --static)
+fi
 
 ## assign puppet agent configuration
-sudo /opt/puppetlabs/bin/puppet config set server "$HOST_FQDN"
-sudo /opt/puppetlabs/bin/puppet config set certname "$HOSTNAME"
+sudo puppet config set server "$HOST_FQDN"
+sudo puppet config set certname "$HOSTNAME"
 
 ## reboot to apply above changes
 ##
