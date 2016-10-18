@@ -75,7 +75,7 @@ vagrant up puppetagent
 ## Testing / Execution
 
 Once the [installation](https://github.com/jeff1evesque/puppet-demonstration/blob/master/README.md#installation)
- requirements are complete, the `puppetagent` can be synchronized to `puppetserver`:
+ requirements are complete, the `puppetagent` can be synchronized to the `puppetserver`:
 
 ```bash
 $ vagrant ssh puppetagent
@@ -108,9 +108,7 @@ As shown in the [introduction](https://github.com/jeff1evesque/puppet-demonstrat
  the foreman gui can be used, to manage corresponding puppetagent nodes.
  Specifically, foreman can be accessed on the host machine, in conjunction with
  the puppetserver, via an [internal network](https://github.com/jeff1evesque/puppet-demonstration/blob/3145a783e3822e465419606e8ff96899bd2b116e/Vagrantfile#L99),
- on `192.168.0.10`.
-
-The above [install scripts](https://github.com/jeff1evesque/puppet-demonstration/tree/master/install_scripts)
+ on `192.168.0.10`. Additionally, the above [install scripts](https://github.com/jeff1evesque/puppet-demonstration/tree/master/install_scripts)
  can be run in vagrant, as well as production-like systems. However, non-
 vagrant environments, require some assumptions. For example,
  [`install_foreman`](https://github.com/jeff1evesque/puppet-demonstration/blob/7f08b038c1d9b54c2a464e6f8dc7c85834e25d2b/install_scripts/install_foreman#L23-L27)
