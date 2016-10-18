@@ -92,7 +92,7 @@ read -p 'Enter your proxy port > ' PROXY_PORT
  same install script, does not prompt, nor make such definitions.
 
 The [install scripts](https://github.com/jeff1evesque/puppet-demonstration/tree/master/install_scripts)
- can be easily run on corresponding virtual machines as follows:
+ can easily be run on corresponding virtual machines as follows:
 
 ```bash
 # virtual machine for puppetserver
