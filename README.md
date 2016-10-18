@@ -9,6 +9,10 @@ This repository is a simple demonstration of a virtualized environment
  has been created from a [minimal iso](http://isoredirect.centos.org/centos/7/isos/x86_64/CentOS-7-x86_64-Minimal-1511.iso),
  which vagrant provisions via the [`Vagrantfile`](https://github.com/jeff1evesque/puppet-demonstration/blob/master/Vagrantfile),
  using corresponding [install scripts](https://github.com/jeff1evesque/puppet-demonstration/tree/master/install_scripts).
+ Though, it is recommended that Centos 7x is used for both the puppetserver,
+ and additional puppetagents, the install scripts are flexible enough to allow
+ puppetagent's to be contained within [Centos 6x](https://wiki.centos.org/Download)
+ operating systems.
 
  When vagrant completes provisioning, a puppetserver, with a corresponding
  [foreman](https://theforeman.org/) gui, is available on the host via the ip
