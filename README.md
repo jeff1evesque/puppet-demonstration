@@ -43,6 +43,10 @@ In order to proceed with the installation for this project, three dependencies
 - [Virtualbox 5.1.2](http://download.virtualbox.org/virtualbox/5.1.2/)
 - [Extension Pack 5.1.2](http://download.virtualbox.org/virtualbox/5.1.2/)
 
+**Note:** though there is a minimum requirement for the virtualbox version,
+ the [extension pack](https://github.com/jeff1evesque/puppet-demonstration/blob/3145a783e3822e465419606e8ff96899bd2b116e/Vagrantfile#L46-L54)
+ must be installed at `5.1.2`.
+
 Once the necessary dependencies have been installed, execute the following
  command to build the virtual environment:
 
