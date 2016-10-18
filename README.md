@@ -1,6 +1,6 @@
 # Puppet Demonstration [![Build Status](https://travis-ci.org/jeff1evesque/puppet-demonstration.svg?branch=master)](https://travis-ci.org/jeff1evesque/puppet-demonstration)
 
-This repository is a simple demonstration of a virtualized environment
+This repository is a simple demonstration of virtualized environments
  ([vagrant](https://www.vagrantup.com/) + [virtualbox](https://www.virtualbox.org/)),
  tailored to exhibit the [puppetserver](https://docs.puppet.com/puppetserver/latest/services_master_puppetserver.html)
  / [puppetagent](https://docs.puppet.com/puppet/latest/reference/man/agent.html) ecosystem,
@@ -10,9 +10,12 @@ This repository is a simple demonstration of a virtualized environment
  which vagrant provisions via the [`Vagrantfile`](https://github.com/jeff1evesque/puppet-demonstration/blob/master/Vagrantfile),
  using corresponding [install scripts](https://github.com/jeff1evesque/puppet-demonstration/tree/master/install_scripts).
 
- When vagrant completes provisioning, a puppetserver, with a corresponding
- [foreman](https://theforeman.org/) gui, is available on the host via the ip
- `192.168.0.10`, which can be used to manage various puppetagent nodes:
+Though, it is recommended to use Centos 7x for both the puppetserver, and
+ additional puppetagents, the [install scripts](https://github.com/jeff1evesque/puppet-demonstration/tree/master/install_scripts)
+ are flexible enough to allow puppetagent's to reside in [Centos 6x](https://wiki.centos.org/Download)
+ operating systems. Regardless of implementation, when vagrant completes
+ provisioning, a puppetserver, with a corresponding [foreman](https://theforeman.org/)
+ gui, is available on the host via the ip `192.168.0.10`, which can be used to manage various puppetagent nodes:
 
 ![Foreman Login](https://cloud.githubusercontent.com/assets/2907085/19436102/4c40ca40-943c-11e6-9554-cd13f363569c.PNG)
 
