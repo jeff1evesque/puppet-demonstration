@@ -88,7 +88,7 @@ read -p 'Enter your proxy port > ' PROXY_PORT
 ...
 ```
 
-**Note:** the vagrant implementation does not require a proxy, hence the
+**Note:** the vagrant implementation does not require a proxy, which is why the
  same install script, does not prompt, nor make such definitions.
 
 ## Testing / Execution
