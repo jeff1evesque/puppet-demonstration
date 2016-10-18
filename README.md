@@ -20,6 +20,10 @@ This repository is a simple demonstration of a virtualized environment
 
 ![Foreman Hosts](https://cloud.githubusercontent.com/assets/2907085/19436123/68a121e4-943c-11e6-8b18-c8582b232870.PNG)
 
+**Note:** the provided [install scripts](https://github.com/jeff1evesque/puppet-demonstration/tree/master/install_scripts),
+ used to provision the corresponding vagrant virtual machine(s), can also be
+ used on production-like environments.
+
 ## Configuration
 
 Fork this project in your GitHub account.  Then, clone your repository, with
@@ -112,11 +116,9 @@ As shown in the [introduction](https://github.com/jeff1evesque/puppet-demonstrat
  via an [internal network](https://github.com/jeff1evesque/puppet-demonstration/blob/3145a783e3822e465419606e8ff96899bd2b116e/Vagrantfile#L99),
  on `192.168.0.10`.
 
-This repository demonstrates the puppetserver / puppetagent ecosystem, with
- and intermediate gui, or foreman, to manage this ecosystem. Although, the
- corresponding [install scripts](https://github.com/jeff1evesque/puppet-demonstration/tree/master/install_scripts)
- can be run in vagrant, it requires some assumptions, if needed to be run
- on production like systems.
+The above [install scripts](https://github.com/jeff1evesque/puppet-demonstration/tree/master/install_scripts)
+ can be run in vagrant, as well as production-like systems. However, for
+ non-vagrant environments, some assumptions are required.
 
 For example, the `install_foreman` bash script, assumes the containing virtual
  machine has a defined [proxy](https://en.wikipedia.org/wiki/Proxy_server).
