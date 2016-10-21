@@ -77,18 +77,13 @@ echo 'System path configured for puppet.'
 echo "$HOST_IP	$HOST_FQDN" >> /etc/hosts
 sudo /etc/init.d/network restart
 
-## get hostname
-if [ "$OS_VERSION" -lt 7 ]; then
-    HOSTNAME=$(hostname)
-else
-    HOSTNAME=$(hostnamectl --static)
-fi
-
 ## assign puppet agent configuration
 if [ "$OS_VERSION" -lt 7 ]; then
+    HOSTNAME=$(hostname)
     /usr/bin/puppet config set server "$HOST_FQDN"
     /usr/bin/puppet config set certname "$HOSTNAME"
 else
+    HOSTNAME=$(hostnamectl --static)
     /opt/puppetlabs/bin/puppet config set server "$HOST_FQDN"
     /opt/puppetlabs/bin/puppet config set certname "$HOSTNAME"
 fi
