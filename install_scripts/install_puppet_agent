@@ -12,6 +12,12 @@ PUPPET_6_RPM='puppetlabs-release-el-6.noarch'
 PUPPET_7_RPM='puppetlabs-release-pc1-el-7.noarch'
 PATH_PUPPET='/opt/puppetlabs/bin'
 
+if [ "$OS_VERSION" -lt 7 ]; then
+    HOSTNAME=$(hostname)
+else
+    HOSTNAME=$(hostnamectl --static)
+fi
+
 ## set proxy, conditionally set additional variables
 ##
 ## Note: only a vagrant implementation should have a private ssh key named
@@ -79,11 +85,9 @@ sudo /etc/init.d/network restart
 
 ## assign puppet agent configuration
 if [ "$OS_VERSION" -lt 7 ]; then
-    HOSTNAME=$(hostname)
     /usr/bin/puppet config set server "$HOST_FQDN"
     /usr/bin/puppet config set certname "$HOSTNAME"
 else
-    HOSTNAME=$(hostnamectl --static)
     /opt/puppetlabs/bin/puppet config set server "$HOST_FQDN"
     /opt/puppetlabs/bin/puppet config set certname "$HOSTNAME"
 fi
