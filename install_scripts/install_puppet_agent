@@ -85,8 +85,13 @@ else
 fi
 
 ## assign puppet agent configuration
-/opt/puppetlabs/bin/puppet config set server "$HOST_FQDN"
-/opt/puppetlabs/bin/puppet config set certname "$HOSTNAME"
+if [ "$OS_VERSION" -lt 7 ]; then
+    /usr/bin/puppet config set server "$HOST_FQDN"
+    /usr/bin/puppet config set certname "$HOSTNAME"
+else
+    /opt/puppetlabs/bin/puppet config set server "$HOST_FQDN"
+    /opt/puppetlabs/bin/puppet config set certname "$HOSTNAME"
+fi
 
 ## reboot to apply above changes
 ##
