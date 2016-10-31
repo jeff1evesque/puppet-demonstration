@@ -33,6 +33,7 @@ else
 
     ## local variables
     CORRECT_PROXY='n'
+    USER='root'
 
     ## prompt proxy configurations
     while [ "${CORRECT_PROXY,,}" != 'y' ] && \
@@ -81,7 +82,9 @@ echo 'Puppet agent installed.'
 ##        Any instances of ',' between the defined delimiters will need to be
 ##        escaped.
 ##
-if [[ ! $(type -P puppet) ]]; then
+USER_PATH=$(awk -F= '{if (/^( \t)?PATH=/) {print $2}}' "$BASH_PROFILE")
+echo -e "Current \$PATH for $USER: $USER_PATH"
+if [[ ! "$USER_PATH" =~ "$PATH_PUPPET" ]]; then
     sed -i "s,$PATH_BASH,$PATH_BASH:$PATH_PUPPET,g" "$BASH_PROFILE"
     echo 'System path configured for puppet.'
 fi
