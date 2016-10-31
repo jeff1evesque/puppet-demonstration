@@ -84,7 +84,7 @@ echo 'Puppet agent installed.'
 ##
 USER_PATH=$(awk -F= '{if (/^( \t)?PATH=/) {print $2}}' "$BASH_PROFILE")
 echo -e "Current \$PATH for $USER: $USER_PATH"
-if [[ ! "$USER_PATH" =~ "$PATH_PUPPET" ]]; then
+if [[ ! $USER_PATH =~ $PATH_PUPPET ]]; then
     sed -i "s,$PATH_BASH,$PATH_BASH:$PATH_PUPPET,g" "$BASH_PROFILE"
     echo 'System path configured for puppet.'
 fi
