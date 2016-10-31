@@ -81,8 +81,10 @@ echo 'Puppet agent installed.'
 ##        Any instances of ',' between the defined delimiters will need to be
 ##        escaped.
 ##
-[[ ! $PATH_PUPPET =~ $PATH ]] && sed -i "s,$PATH_BASH,$PATH_BASH:$PATH_PUPPET,g" "$BASH_PROFILE"
-echo 'System path configured for puppet.'
+if [[ ! $(type -P puppet) ]]; then
+    sed -i "s,$PATH_BASH,$PATH_BASH:$PATH_PUPPET,g" "$BASH_PROFILE"
+    echo 'System path configured for puppet.'
+fi
 
 # add reference to puppetserver
 echo "$HOST_IP	$HOST_FQDN" >> /etc/hosts
