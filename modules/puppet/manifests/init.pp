@@ -1,10 +1,13 @@
 ## @init.pp, ensure puppet service enabled, and running on successive reboot.
 
+## local variables
+$config_file = '/etc/puppetlabs/puppet/puppet.conf'
+
 ## ensure configuration: allows 'subscribe'
 ##
 ## @notify, restarts puppet if the file changes
 ##
-file { '/etc/puppetlabs/puppet/puppet.conf':
+file { $config_file:
     ensure  => file,
     content => template('puppet/puppet.erb'),
     mode    => '0600',
@@ -17,5 +20,5 @@ file { '/etc/puppetlabs/puppet/puppet.conf':
 service { 'puppet':
     ensure  => running,
     enable  => true,
-    require => File['/etc/puppetlabs/puppet/puppet.conf'],
+    require => File[$config_file],
 }
