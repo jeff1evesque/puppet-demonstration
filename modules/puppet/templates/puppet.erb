@@ -1,0 +1,77 @@
+### File managed with puppet ###
+## Module:           'puppet'
+
+[main]
+    #  Where Puppet's general dynamic and/or growing data is kept
+    vardir = /opt/puppetlabs/puppet/cache
+
+    # The Puppet log directory.
+    # The default value is '$vardir/log'.
+    logdir = /var/log/puppetlabs/puppet
+
+    # Where Puppet PID files are kept.
+    # The default value is '$vardir/run'.
+    rundir = /var/run/puppetlabs
+
+    # Where SSL certificates are kept.
+    # The default value is '$confdir/ssl'.
+    ssldir = /etc/puppetlabs/puppet/ssl
+
+    # Allow services in the 'puppet' group to access key (Foreman + proxy)
+    privatekeydir = $ssldir/private_keys { group = service }
+    hostprivkey = $privatekeydir/$certname.pem { mode = 640 }
+
+    show_diff     = false
+
+## Server config
+
+    reports          = foreman
+
+    environmentpath  = /etc/puppetlabs/code/environments
+    basemodulepath   = /etc/puppetlabs/code/environments/common:/etc/puppetlabs/code/modules:/opt/puppetlabs/puppet/modules
+
+    hiera_config     = $confdir/hiera.yaml
+### Next part of the file is managed by a different template ###
+## Module:           'puppet'
+
+[agent]
+    # The file in which puppetd stores a list of the classes
+    # associated with the retrieved configuration.  Can be loaded in
+    # the separate ``puppet`` executable using the ``--loadclasses``
+    # option.
+    # The default value is '$statedir/classes.txt'.
+    classfile = $statedir/classes.txt
+
+    # Where puppetd caches the local configuration.  An
+    # extension indicating the cache format is added automatically.
+    # The default value is '$confdir/localconfig'.
+    localconfig = $vardir/localconfig
+
+    # Disable the default schedules as they cause continual skipped
+    # resources to be displayed in Foreman - only for Puppet >= 3.4
+    default_schedules = false
+
+    report            = true
+    pluginsync        = true
+    masterport        = 8140
+    environment       = production
+    certname          = foreman.sandbox.local
+    server            = foreman.sandbox.local
+    listen            = false
+    splay             = false
+    splaylimit        = 1800
+    runinterval       = 1800
+    noop              = false
+    usecacheonfailure = true
+### Next part of the file is managed by a different template ###
+## Module:           'puppet'
+
+[master]
+    autosign       = /etc/puppetlabs/puppet/autosign.conf { mode = 0664 }
+    external_nodes = /etc/puppetlabs/puppet/node.rb
+    node_terminus  = exec
+    ca             = true
+    ssldir         = /etc/puppetlabs/puppet/ssl
+    certname       = foreman.sandbox.local
+    parser         = current
+    strict_variables = false
