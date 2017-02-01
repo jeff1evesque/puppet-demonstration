@@ -119,6 +119,17 @@ firewall-cmd --reload
 firewall-cmd --zone=public --list-all
 echo 'Firewalld rules implemented.'
 
+## mount /tmp directory without 'noexec'
+##
+## Note: https://docs.puppet.com/puppetserver/2.6/known_issues.html#tmp-directory-mounted-noexec
+##
+## Note: only a vagrant implementation should have a private ssh key named
+##       'puppetagent_vagrant.private'.
+##
+if ! [ -f /vagrant/.ssh/puppetserver_vagrant.private ]; then
+    mount -o remount,exec /tmp
+fi
+
 ## allow selinux rule for httpd
 sudo setsebool -P httpd_read_user_content 1
 
@@ -128,6 +139,12 @@ echo 'Foreman installed.'
 
 ## allow all puppetagents to connect to puppetserver
 echo '*' >> /etc/puppetlabs/puppet/autosign.conf
+
+## ensure manifests and modules
+if [ -f /vagrant/.ssh/puppetserver_vagrant.private ]; then
+    sudo cp -rf /vagrant/code/ /etc/puppetlabs/
+    sudo cp -rf /vagrant/puppet/ /etc/puppetlabs/
+fi
 
 ## reboot to apply above changes
 ##
