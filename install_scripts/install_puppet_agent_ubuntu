@@ -19,8 +19,11 @@ exists() { [[ -e $1 ]]; }
 shopt -s nullglob
 
 if exists /vagrant/.ssh/*_vagrant.private; then
+
+    USER='vagrant'
     HOST_FQDN='foreman.sandbox.local'
     HOST_IP='192.168.0.10'
+
 else
 
     ## local variables
@@ -55,13 +58,7 @@ HOSTNAME=$(hostname)
 ## Note: only a vagrant implementation should have a private ssh key named
 ##       'puppetserver_vagrant.private'.
 ##
-if exists /vagrant/.ssh/*_vagrant.private; then
-
-    PATH_BASH="PATH=\$PATH\:\$HOME/.local/bin"
-    USER='provisioner'
-    BASH_PROFILE="/home/$USER/.bash_profile"
-
-else
+if ! exists /vagrant/.ssh/*_vagrant.private; then
 
     ## local variables
     CORRECT_PROXY='n'
@@ -89,9 +86,6 @@ else
         ## acquire proxy port
         read -p 'Enter your proxy port > ' PROXY_PORT
     done
-
-    BASH_PROFILE='/root/.bash_profile'
-    PATH_BASH="PATH=\$PATH\:\$HOME/bin"
 
     ## setup proxy: lasts until reboot
     export http_proxy=http://"$PROXY_IP:$PROXY_PORT"
