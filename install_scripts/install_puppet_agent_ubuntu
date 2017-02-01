@@ -27,7 +27,7 @@ else
     CORRECT_HOST='n'
     USER='root'
 
-    ## prompt proxy configurations
+    ## prompt host fqdn and ip
     while [ "${CORRECT_HOST,,}" != 'y' ] && \
         [ "${CORRECT_HOST,,}" != 'yes' ] && \
         [ "${CORRECT_HOST,,}" != 'true' ] && \
@@ -133,15 +133,38 @@ fi
 
 ## assign puppet agent configuration
 if [ "$PUPPET_ENVIRONMENT" != 'unknown' ]; then
+    ## create puppet environment directory
     sudo mkdir -p "/etc/puppetlabs/code/environments/$PUPPET_ENVIRONMENT"
     sudo chown vagrant:root "/etc/puppetlabs/code/environments/$PUPPET_ENVIRONMENT"
 
     ## set puppet environment (ubuntu 14.04)
     sudo /opt/puppetlabs/bin/puppet config set environment "$PUPPET_ENVIRONMENT"
 else
-    echo "please execute 'mkdir -p /etc/puppetlabs/code/environments/YOUR-ENVIRONMENT'"
-    echo "please execute 'sudo chown vagrant:root /etc/puppetlabs/code/environments/YOUR-ENVIRONMENT'"
-    echo "please execute 'sudo /opt/puppetlabs/bin/puppet config set environment YOUR-ENVIRONMENT'"
+
+    ## local variables
+    CORRECT_ENVIRONMENT='n'
+
+    ## prompt proxy configurations
+    while [ "${CORRECT_ENVIRONMENT,,}" != 'y' ] && \
+        [ "${CORRECT_ENVIRONMENT,,}" != 'yes' ] && \
+        [ "${CORRECT_ENVIRONMENT,,}" != 'true' ] && \
+        [ "${CORRECT_ENVIRONMENT,,}" != 'ok' ]; do
+
+        ## acquire host fqdn
+        read -p 'Name of your puppet environment > ' PUPPET_ENVIRONMENT
+
+        ## verify submission
+        echo "Your puppet environment: $PUPPET_ENVIRONMENT"
+        read -p 'Is this correct (y) > ' CORRECT_ENVIRONMENT
+    done
+
+    ## create puppet environment directory
+    sudo mkdir -p "/etc/puppetlabs/code/environments/$PUPPET_ENVIRONMENT"
+    sudo chown vagrant:root "/etc/puppetlabs/code/environments/$PUPPET_ENVIRONMENT"
+
+    ## set puppet environment (ubuntu 14.04)
+    sudo /opt/puppetlabs/bin/puppet config set environment "$PUPPET_ENVIRONMENT"
+
 fi
 
 # add reference to puppetserver
