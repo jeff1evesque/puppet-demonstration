@@ -7,13 +7,15 @@
 # you're doing.
 Vagrant.configure(2) do |config|
   ## variables
-  #
-  #  Note: multiple vagrant plugins follow the following syntax:
-  #
-  #        required_plugins = %w(plugin1 plugin2 plugin3)
-  #
+  ##
+  ## Note: multiple vagrant plugins follow the following syntax:
+  ##
+  ##       required_plugins = %w(plugin1 plugin2 plugin3)
+  ##
   required_plugins = %w(vagrant-triggers)
   plugin_installed = false
+  ENV['AGENT_ENV']  = 'Trusty64'
+  ENV['SERVER_ENV'] = 'CentOS7'
 
   ## install vagrant plugins
   required_plugins.each do |plugin|
@@ -30,30 +32,25 @@ Vagrant.configure(2) do |config|
 
   ## primary machine: puppetserver will autostart
   config.vm.define 'puppetserver', primary: true do |puppetserver|
-    ## Variables
-    #
-    #  Note: remember to define ENV['ENV']
-    #
-    ENV['ENV'] = 'CentOS7'
-
     ## increase RAM to allow greater HEAP required by puppetserver
     puppetserver.vm.provider 'virtualbox' do |v|
       v.customize ['modifyvm', :id, '--memory', '5000']
     end
 
     ## implement custom vagrant box with ssh credentials
-    #
-    #  Note: please ensure vbox, and guest additions on the host is 5.1.2:
-    #
-    #        - http://download.virtualbox.org/virtualbox/5.1.2/
-    #
-    #        this requirement is not arbitrary, and corresponds to the guest
-    #        additions installed on the vagrant base box. A difference between
-    #        the host and guest, will require each vagrant vm's defined in this
-    #        Vagrantfile, to be restarted after the initial build, with the
-    #        possibility of other manual configurations.
-    #
+    ##
+    ## Note: please ensure vbox, and guest additions on the host is 5.1.2:
+    ##
+    ##       - http://download.virtualbox.org/virtualbox/5.1.2/
+    ##
+    ##       this requirement is not arbitrary, and corresponds to the guest
+    ##       additions installed on the vagrant base box. A difference between
+    ##       the host and guest, will require each vagrant vm's defined in this
+    ##       Vagrantfile, to be restarted after the initial build, with the
+    ##       possibility of other manual configurations.
+    ##
     if ENV['ENV'] == 'CentOS7'
+
       ## ensure private key
       puppetserver.trigger.before :up do
         run 'mkdir -p .ssh'
@@ -75,9 +72,17 @@ Vagrant.configure(2) do |config|
     puppetserver.ssh.username         = $ssh_username
     puppetserver.ssh.password         = $ssh_password
 
-    ## clean up host files after 'vagrant destroy'
-    puppetserver.trigger.after :destroy do
-      run 'rm -rf .ssh/puppetserver_vagrant.private'
+    elsif ENV['SERVER_ENV'] == 'Trusty64'
+
+      atlas_repo  = 'jeff1evesque'
+      atlas_box   = 'trusty64'
+      box_version = '1.0.0'
+
+      puppetserver.vm.box                        = "#{atlas_repo}/#{atlas_box}"
+      puppetserver.vm.box_url                    = "https://atlas.hashicorp.com/#{atlas_repo}/boxes/#{atlas_box}/versions/#{box_version}/providers/virtualbox.box"
+      puppetserver.vm.box_download_checksum      = 'cc26da6ba1c169bdc6e9168125ddb0525'
+      puppetserver.vm.box_download_checksum_type = 'md5'
+
     end
 
     ## shell provision: install foreman (with puppetserver)
@@ -97,33 +102,33 @@ Vagrant.configure(2) do |config|
     ##       enabled as well.
     ##
     puppetserver.vm.network :private_network, ip: '192.168.0.10'
+
+    ## clean up host files after 'vagrant destroy'
+    puppetserver.trigger.after :destroy do
+      run 'rm -rf .ssh/puppetserver_vagrant.private'
+    end
   end
 
   ## nonprimary machine: puppetagent
-  #
-  #  @autostart, determine if the machine should start automatically on
-  #      'vagrant up'
-  #
+  ##
+  ## @autostart, determine if the machine should start automatically on
+  ##     'vagrant up'
+  ##
   config.vm.define 'puppetagent', autostart: false do |puppetagent|
-    ## Variables
-    #
-    #  Note: remember to define ENV['ENV']
-    #
-    ENV['ENV'] = 'CentOS7'
+    ## ensure puppet modules directory
+    puppetagent.trigger.before :up do
+      run 'mkdir -p code/environments/vagrant/modules'
+      run 'mkdir -p code/environments/vagrant/modules_contrib'
+    end
 
-    ## implement custom vagrant box with ssh credentials
-    #
-    #  Note: please ensure vbox, and guest additions on the host is 5.1.2:
-    #
-    #        - http://download.virtualbox.org/virtualbox/5.1.2/
-    #
-    #        this requirement is not arbitrary, and corresponds to the guest
-    #        additions installed on the vagrant base box. A difference between
-    #        the host and guest, will require each vagrant vm's defined in this
-    #        Vagrantfile, to be restarted after the initial build, with the
-    #        possibility of other manual configurations.
-    #
-    if ENV['ENV'] == 'CentOS7'
+    ## Every Vagrant development environment requires a box. You can search for
+    ## boxes at https://atlas.hashicorp.com/search.
+    ##
+    ## Note: if the NCCoE network won't allow the 'wget' the private ssh key, then
+    ##       add the '--no-check-certificate' flag at the end of the command.
+    ##
+    if ENV['AGENT_ENV'] == 'CentOS7'
+
       ## ensure private key
       puppetagent.trigger.before :up do
         run 'mkdir -p .ssh'
@@ -135,23 +140,41 @@ Vagrant.configure(2) do |config|
       $ssh_username              = 'provisioner'
       $ssh_password              = 'vagrant-provision'
       $privateKey                = '.ssh/puppetagent_vagrant.private'
+
+      ## implement pty since ssh user is not sudoless
+      puppetagent.ssh.pty = true
+
+      ## ssh
+      puppetagent.ssh.private_key_path = $privateKey
+      puppetagent.ssh.username         = $ssh_username
+      puppetagent.ssh.password         = $ssh_password
+
+      ## shell provision: install puppetagent
+      config.vm.provision "shell", inline: <<-SHELL
+        sudo yum install -y dos2unix
+        dos2unix /vagrant/install_scripts/*
+      SHELL
+      puppetagent.vm.provision :shell, path: 'install_scripts/install_puppet_agent_centos'
+
+    elsif ENV['AGENT_ENV'] == 'Trusty64'
+
+      atlas_repo  = 'jeff1evesque'
+      atlas_box   = 'trusty64'
+      box_version = '1.0.0'
+
+      puppetagent.vm.box                        = "#{atlas_repo}/#{atlas_box}"
+      puppetagent.vm.box_url                    = "https://atlas.hashicorp.com/#{atlas_repo}/boxes/#{atlas_box}/versions/#{box_version}/providers/virtualbox.box"
+      puppetagent.vm.box_download_checksum      = 'cc26da6ba1c169bdc6e9168125ddb0525'
+      puppetagent.vm.box_download_checksum_type = 'md5'
+
+      ## shell provision: install puppetagent
+      config.vm.provision "shell", inline: <<-SHELL
+        sudo apt-get install -y dos2unix
+        dos2unix /vagrant/install_scripts/*
+      SHELL
+      puppetagent.vm.provision :shell, path: 'install_scripts/install_puppet_agent_ubuntu'
+
     end
-
-    ## ensure pty is used for provisioning (useful for vagrant base box)
-    puppetagent.ssh.pty = true
-
-    ## ssh
-    puppetagent.ssh.private_key_path = $privateKey
-    puppetagent.ssh.username         = $ssh_username
-    puppetagent.ssh.password         = $ssh_password
-
-    ## clean up host files after 'vagrant destroy'
-    puppetagent.trigger.after :destroy do
-      run 'rm -rf .ssh/puppetagent_vagrant.private'
-    end
-
-    ## shell provision: install puppetagent
-    puppetagent.vm.provision :shell, path: 'install_scripts/install_puppet_agent'
 
     ## internal network:  virtual machines can communicate between each other
     ##                    and with the hosting system but not outside.
@@ -161,6 +184,12 @@ Vagrant.configure(2) do |config|
     ##       enabled as well.
     ##
     puppetagent.vm.network :private_network, ip: '192.168.0.11'
+
+    ## clean up files on the host after 'vagrant destroy'
+    puppetagent.trigger.after :destroy do
+      run 'rm -rf .ssh/puppetagent_vagrant.private'
+      run 'rm -rf code/environments/vagrant/modules_contrib'
+    end
   end
 end
 
