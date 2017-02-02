@@ -20,7 +20,6 @@ shopt -s nullglob
 
 if exists /vagrant/.ssh/*_vagrant.private; then
 
-    USER='vagrant'
     HOST_FQDN='foreman.sandbox.local'
     HOST_IP='192.168.0.10'
 
@@ -28,7 +27,6 @@ else
 
     ## local variables
     CORRECT_HOST='n'
-    USER='root'
 
     ## prompt host fqdn and ip
     while [ "${CORRECT_HOST,,}" != 'y' ] && \
