@@ -5,13 +5,48 @@
 ## @HOST_FQDN, value corresponds to the assignment set in 'install_foreman',
 ##     when defining /etc/hosts, and /etc/hostname.
 ##
-HOST_IP='192.168.0.10'
-HOST_FQDN='foreman.sandbox.local'
 OS_VERSION=$(rpm -qa \*-release | grep -Ei "oracle|redhat|centos" | cut -d"-" -f3)
 PUPPET_6_RPM='puppetlabs-release-el-6.noarch'
 PUPPET_7_RPM='puppetlabs-release-pc1-el-7.noarch'
-PATH_PUPPET='/opt/puppetlabs/bin'
+VAGRANT_IP='192.168.0.*'
 
+## custom function
+exists() { [[ -e $1 ]]; }
+
+## enable nullglob
+shopt -s nullglob
+
+if exists /vagrant/.ssh/*_vagrant.private; then
+
+    HOST_FQDN='foreman.sandbox.local'
+    HOST_IP='192.168.0.10'
+
+else
+
+    ## local variables
+    CORRECT_HOST='n'
+
+    ## prompt host fqdn and ip
+    while [ "${CORRECT_HOST,,}" != 'y' ] && \
+        [ "${CORRECT_HOST,,}" != 'yes' ] && \
+        [ "${CORRECT_HOST,,}" != 'true' ] && \
+        [ "${CORRECT_HOST,,}" != 'ok' ]; do
+
+        ## acquire host fqdn
+        read -p 'Enter host fqdn > ' HOST_FQDN
+
+        ## acquire host ip
+        read -p 'Enter host ip > ' HOST_IP
+
+        ## verify submission
+        echo "Your host's fqdn: $HOST_FQDN"
+        echo "Your host's ip: $HOST_IP"
+        read -p 'Is this correct (y) > ' CORRECT_HOST
+    done
+
+fi
+
+## get hostname
 if [ "$OS_VERSION" -lt 7 ]; then
     HOSTNAME=$(hostname)
 else
@@ -65,6 +100,9 @@ else
 
 fi
 
+## disable nullglob
+shopt -u nullglob
+
 ## install puppetagent
 if [ "$OS_VERSION" -lt 7 ]; then
     rpm -e "$PUPPET_6_RPM"
@@ -76,21 +114,68 @@ fi
 sudo yum install -y puppet
 echo 'Puppet agent installed.'
 
-## ensure system path has puppet reference
-##
-##  Note: an arbitrary choice was made to use ',' as the delimiting character.
-##        Any instances of ',' between the defined delimiters will need to be
-##        escaped.
-##
-USER_PATH=$(awk -F= '{if (/^( \t)?PATH=/) {print $2}}' "$BASH_PROFILE")
-echo -e "Current \$PATH for $USER: $USER_PATH"
-if [[ ! $USER_PATH =~ $PATH_PUPPET ]]; then
-    sed -i "s,$PATH_BASH,$PATH_BASH:$PATH_PUPPET,g" "$BASH_PROFILE"
-    echo 'System path configured for puppet.'
+## get ip address
+while IFS=' /' read -r _ dev _ ip _; do
+    [[ $dev == en* ]] || [[ $dev == eth* ]] || continue
+    IP_ADDRESS="$ip"
+done < <(ip -o -4 addr show)
+
+## define puppet environment
+if [[ $IP_ADDRESS == $VAGRANT_IP ]]; then
+    PUPPET_ENVIRONMENT='vagrant'
+else
+    echo "please execute 'puppet config set environment YOUR-ENVIRONMENT'"
+    PUPPET_ENVIRONMENT='unknown'
+fi
+
+## assign puppet agent configuration
+if [ "$PUPPET_ENVIRONMENT" != 'unknown' ]; then
+
+    ## create puppet environment directory
+    sudo mkdir -p "/etc/puppetlabs/code/environments/$PUPPET_ENVIRONMENT"
+    sudo chown vagrant:root "/etc/puppetlabs/code/environments/$PUPPET_ENVIRONMENT"
+
+    ## set puppet environment (ubuntu 14.04)
+    if [ "$OS_VERSION" -lt 7 ]; then
+        /usr/bin/puppet config set config set environment "$PUPPET_ENVIRONMENT"
+    else
+        /opt/puppetlabs/bin/puppet config set environment "$PUPPET_ENVIRONMENT"
+    fi
+
+else
+
+    ## local variables
+    CORRECT_ENVIRONMENT='n'
+
+    ## prompt proxy configurations
+    while [ "${CORRECT_ENVIRONMENT,,}" != 'y' ] && \
+        [ "${CORRECT_ENVIRONMENT,,}" != 'yes' ] && \
+        [ "${CORRECT_ENVIRONMENT,,}" != 'true' ] && \
+        [ "${CORRECT_ENVIRONMENT,,}" != 'ok' ]; do
+
+        ## acquire host fqdn
+        read -p 'Name of your puppet environment > ' PUPPET_ENVIRONMENT
+
+        ## verify submission
+        echo "Your puppet environment: $PUPPET_ENVIRONMENT"
+        read -p 'Is this correct (y) > ' CORRECT_ENVIRONMENT
+    done
+
+    ## create puppet environment directory
+    sudo mkdir -p "/etc/puppetlabs/code/environments/$PUPPET_ENVIRONMENT"
+    sudo chown vagrant:root "/etc/puppetlabs/code/environments/$PUPPET_ENVIRONMENT"
+
+    ## set puppet environment (ubuntu 14.04)
+    if [ "$OS_VERSION" -lt 7 ]; then
+        /usr/bin/puppet config set config set environment "$PUPPET_ENVIRONMENT"
+    else
+        /opt/puppetlabs/bin/puppet config set environment "$PUPPET_ENVIRONMENT"
+    fi
+
 fi
 
 # add reference to puppetserver
-echo "$HOST_IP	$HOST_FQDN" >> /etc/hosts
+printf '%s %s\n' "$HOST_IP" "$HOST_FQDN" | sudo tee -a /etc/hosts
 sudo /etc/init.d/network restart
 
 ## assign puppet agent configuration
@@ -102,11 +187,17 @@ else
     /opt/puppetlabs/bin/puppet config set certname "$HOSTNAME"
 fi
 
+## enable nullglob
+shopt -s nullglob
+
 ## reboot to apply above changes
 ##
 ## Note: only a vagrant implementation should have a private ssh key named
 ##       'puppetagent_vagrant.private'.
 ##
-if ! [ -f /vagrant/.ssh/puppetagent_vagrant.private ]; then
+if ! exists /vagrant/.ssh/*_vagrant.private; then
     sudo reboot
 fi
+
+## disable nullglob
+shopt -u nullglob
