@@ -58,13 +58,7 @@ fi
 ## Note: only a vagrant implementation should have a private ssh key named
 ##       'puppetagent_vagrant.private'.
 ##
-if [ -f /vagrant/.ssh/puppetagent_vagrant.private ]; then
-
-    PATH_BASH="PATH=\$PATH\:\$HOME/.local/bin"
-    USER='provisioner'
-    BASH_PROFILE="/home/$USER/.bash_profile"
-
-else
+if ! exists /vagrant/.ssh/*_vagrant.private; then
 
     ## local variables
     CORRECT_PROXY='n'
@@ -86,9 +80,6 @@ else
         echo "Your proxy: $PROXY_IP:$PROXY_PORT"
         read -p 'Is this correct (y) > ' CORRECT_PROXY
     done
-
-    BASH_PROFILE='/root/.bash_profile'
-    PATH_BASH="PATH=\$PATH\:\$HOME/bin"
 
     ## setup proxy: lasts until reboot
     export http_proxy=http://"$PROXY_IP:$PROXY_PORT"
