@@ -125,12 +125,14 @@ fi
 
 ## assign puppet agent configuration
 if [ "$PUPPET_ENVIRONMENT" != 'unknown' ]; then
+
     ## create puppet environment directory
     sudo mkdir -p "/etc/puppetlabs/code/environments/$PUPPET_ENVIRONMENT"
     sudo chown vagrant:root "/etc/puppetlabs/code/environments/$PUPPET_ENVIRONMENT"
 
     ## set puppet environment (ubuntu 14.04)
     sudo /opt/puppetlabs/bin/puppet config set environment "$PUPPET_ENVIRONMENT"
+
 else
 
     ## local variables
