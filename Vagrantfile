@@ -12,8 +12,8 @@ Vagrant.configure(2) do |config|
   ##
   ##       required_plugins = %w(plugin1 plugin2 plugin3)
   ##
-  required_plugins = %w(vagrant-triggers)
-  plugin_installed = false
+  required_plugins  = %w(vagrant-triggers)
+  plugin_installed  = false
   ENV['AGENT_ENV']  = 'Trusty64'
   ENV['SERVER_ENV'] = 'CentOS7'
 
@@ -34,7 +34,7 @@ Vagrant.configure(2) do |config|
   config.vm.define 'puppetserver', primary: true do |puppetserver|
     ## increase RAM to allow greater HEAP required by puppetserver
     puppetserver.vm.provider 'virtualbox' do |v|
-      v.customize ['modifyvm', :id, '--memory', '5000']
+      v.customize ['modifyvm', :id, '--memory', '512']
     end
 
     ## implement custom vagrant box with ssh credentials
@@ -49,7 +49,7 @@ Vagrant.configure(2) do |config|
     ##       Vagrantfile, to be restarted after the initial build, with the
     ##       possibility of other manual configurations.
     ##
-    if ENV['ENV'] == 'CentOS7'
+    if ENV['SERVER_ENV'] == 'CentOS7'
 
       ## ensure private key
       puppetserver.trigger.before :up do
@@ -62,21 +62,25 @@ Vagrant.configure(2) do |config|
       $ssh_username               = 'provisioner'
       $ssh_password               = 'vagrant-provision'
       $privateKey                 = '.ssh/puppetserver_vagrant.private'
-    end
 
-    ## ensure pty is used for provisioning (useful for vagrant base box)
-    puppetserver.ssh.pty = true
+      ## ensure pty is used for provisioning (useful for vagrant base box)
+      puppetserver.ssh.pty = true
 
-    ## ssh
-    puppetserver.ssh.private_key_path = $privateKey
-    puppetserver.ssh.username         = $ssh_username
-    puppetserver.ssh.password         = $ssh_password
+      ## ssh
+      puppetserver.ssh.private_key_path = $privateKey
+      puppetserver.ssh.username         = $ssh_username
+      puppetserver.ssh.password         = $ssh_password
+
+      puppetserver.vm.provision "shell", inline: <<-SHELL
+        sudo yum install -y dos2unix
+        dos2unix /vagrant/install_scripts/*
+      SHELL
 
     elsif ENV['SERVER_ENV'] == 'Trusty64'
 
       atlas_repo  = 'jeff1evesque'
       atlas_box   = 'trusty64'
-      box_version = '1.0.0'
+      box_version = '1.1.0'
 
       puppetserver.vm.box                        = "#{atlas_repo}/#{atlas_box}"
       puppetserver.vm.box_url                    = "https://atlas.hashicorp.com/#{atlas_repo}/boxes/#{atlas_box}/versions/#{box_version}/providers/virtualbox.box"
@@ -150,7 +154,7 @@ Vagrant.configure(2) do |config|
       puppetagent.ssh.password         = $ssh_password
 
       ## shell provision: install puppetagent
-      config.vm.provision "shell", inline: <<-SHELL
+      puppetagent.vm.provision "shell", inline: <<-SHELL
         sudo yum install -y dos2unix
         dos2unix /vagrant/install_scripts/*
       SHELL
@@ -168,7 +172,7 @@ Vagrant.configure(2) do |config|
       puppetagent.vm.box_download_checksum_type = 'md5'
 
       ## shell provision: install puppetagent
-      config.vm.provision "shell", inline: <<-SHELL
+      puppetagent.vm.provision "shell", inline: <<-SHELL
         sudo apt-get install -y dos2unix
         dos2unix /vagrant/install_scripts/*
       SHELL
@@ -192,4 +196,3 @@ Vagrant.configure(2) do |config|
     end
   end
 end
-
