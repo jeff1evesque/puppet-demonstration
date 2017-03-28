@@ -158,13 +158,13 @@ Vagrant.configure(2) do |config|
 
     elsif ENV['AGENT_ENV'] == 'Trusty64'
 
-      atlas_repo  = 'jeff1evesque'
-      atlas_box   = 'trusty64'
-      box_version = '1.0.0'
+      atlas_repo        = 'jeff1evesque'
+      atlas_box         = 'trusty64'
+      atlas_box_version = '1.1.0'
 
       puppetagent.vm.box                        = "#{atlas_repo}/#{atlas_box}"
-      puppetagent.vm.box_url                    = "https://atlas.hashicorp.com/#{atlas_repo}/boxes/#{atlas_box}/versions/#{box_version}/providers/virtualbox.box"
-      puppetagent.vm.box_download_checksum      = 'cc26da6ba1c169bdc6e9168125ddb0525'
+      puppetagent.vm.box_version                = atlas_box_version
+      puppetagent.vm.box_download_checksum      = '28f704ae302a7b11879a7d835a727e8'
       puppetagent.vm.box_download_checksum_type = 'md5'
 
       ## shell provision: install puppetagent
