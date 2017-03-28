@@ -71,11 +71,6 @@ Vagrant.configure(2) do |config|
       puppetserver.ssh.username         = $ssh_username
       puppetserver.ssh.password         = $ssh_password
 
-      puppetserver.vm.provision "shell", inline: <<-SHELL
-        sudo yum install -y dos2unix
-        dos2unix /vagrant/install_scripts/*
-      SHELL
-
     elsif ENV['SERVER_ENV'] == 'Trusty64'
 
       atlas_repo  = 'jeff1evesque'
@@ -88,6 +83,11 @@ Vagrant.configure(2) do |config|
       puppetserver.vm.box_download_checksum_type = 'md5'
 
     end
+
+    puppetserver.vm.provision "shell", inline: <<-SHELL
+      sudo yum install -y dos2unix
+      dos2unix /vagrant/install_scripts/*
+    SHELL
 
     ## shell provision: install foreman (with puppetserver)
     puppetserver.vm.provision :shell, path: 'install_scripts/install_foreman'
