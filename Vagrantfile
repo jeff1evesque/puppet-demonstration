@@ -34,7 +34,7 @@ Vagrant.configure(2) do |config|
   config.vm.define 'puppetserver', primary: true do |puppetserver|
     ## increase RAM to allow greater HEAP required by puppetserver
     puppetserver.vm.provider 'virtualbox' do |v|
-      v.customize ['modifyvm', :id, '--memory', '1024']
+      v.customize ['modifyvm', :id, '--memory', '4096']
     end
 
     ## implement custom vagrant box with ssh credentials
