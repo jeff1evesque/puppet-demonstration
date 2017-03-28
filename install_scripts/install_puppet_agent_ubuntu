@@ -161,21 +161,33 @@ else
 
 fi
 
+## default search domain
+if exists /vagrant/.ssh/*_vagrant.private; then
+    sudo sh -c "echo 'search foreman.sandbox.local' >> /etc/resolv.conf"
+    LOCAL_FQDN="$HOSTNAME".foreman.sandbox.local
+else
+    LOCAL_FQDN="$HOSTNAME"
+fi
+
+## append local fqdn
+sudo sh -c "sed -i \"/127.0.0.1/s/$/	$LOCAL_FQDN/\" /etc/hosts"
+sudo sh -c "sed -i \"/127.0.1.1/s/$/	$LOCAL_FQDN/\" /etc/hosts"
+
 # add reference to puppetserver
 printf '%s %s\n' "$HOST_IP" "$HOST_FQDN" | sudo tee -a /etc/hosts
 sudo ifdown eth0 && sudo ifup eth0
 
 ## assign puppet agent configuration (ubuntu 14.04)
 sudo /opt/puppetlabs/bin/puppet config set server "$HOST_FQDN"
-sudo /opt/puppetlabs/bin/puppet config set certname "$HOSTNAME"
+sudo /opt/puppetlabs/bin/puppet config set certname "$LOCAL_FQDN"
 
 ## prevent ssl collision
 ##
 ## Note: sometimes when ssl certificates exists, errors prevent puppetagents
 ##       from connecting with the puppetserver.
 ##
-if [ -f /var/lib/puppet/ssl ]; then
-    sudo mv /var/lib/puppet/ssl /var/lib/puppet/ssl.old
+if [ -f /etc/puppetlabs/puppet/ssl ]; then
+    sudo mv /etc/puppetlabs/puppet/ssl /etc/puppetlabs/puppet/ssl.bk
 fi
 
 ## enable nullglob
