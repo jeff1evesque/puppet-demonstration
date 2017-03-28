@@ -143,7 +143,9 @@ echo '*' >> /etc/puppetlabs/puppet/autosign.conf
 ## ensure manifests and modules
 if [ -f /vagrant/.ssh/puppetserver_vagrant.private ]; then
     sudo cp -rf /vagrant/code/ /etc/puppetlabs/
-    sudo cp -rf /vagrant/puppet/ /etc/puppetlabs/
+    sudo cp -rf /vagrant/puppet/hieradata/ /etc/puppetlabs/hieradata/
+    sudo cp -f /vagrant/puppet/hiera.yaml /etc/puppetlabs/hiera.yaml
+    sudo chown -R puppet:root /etc/puppetlabs/
 fi
 
 ## reboot to apply above changes
