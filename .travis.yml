@@ -18,6 +18,6 @@ install:
 ## implement linting / unit tests
 script:
   # lint codebase
-  - find . -type f -exec grep -l '^#!/bin/bash' {} + | xargs shellcheck
+  - find . -type f -exec grep -l '^#!/bin/bash' {} + | xargs shellcheck -e SC2053
   - find . -name '*.sh' -type f -exec shellcheck {} \;
   - mdl . --style test/lint/markdown.rb
