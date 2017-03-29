@@ -1,3 +1,7 @@
 # ignore the following directories
 .ssh/
 .vagrant/
+
+# ignore all modules (except exclamated exceptions)
+modules/*
+!modules/puppet/
