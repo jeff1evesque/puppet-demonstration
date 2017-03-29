@@ -60,6 +60,8 @@ if ! exists /vagrant/.ssh/*_vagrant.private; then
 
     ## local variables
     CORRECT_PROXY='n'
+    PROXY_IP='null'
+    PROXY_PORT='null'
 
     ## prompt proxy configurations
     while [ "${CORRECT_PROXY,,}" != 'y' ] && \
@@ -117,7 +119,7 @@ done < <(ip -o -4 addr show)
 
 ## define puppet environment
 if [[ $IP_ADDRESS == $VAGRANT_IP ]]; then
-    PUPPET_ENVIRONMENT='vagrant'
+    PUPPET_ENVIRONMENT='trusty64'
 else
     echo "please execute 'puppet config set environment YOUR-ENVIRONMENT'"
     PUPPET_ENVIRONMENT='unknown'
