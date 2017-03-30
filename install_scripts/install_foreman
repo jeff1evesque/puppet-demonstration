@@ -144,7 +144,7 @@ echo '*' >> /etc/puppetlabs/puppet/autosign.conf
 if [ -f /vagrant/.ssh/puppetserver_vagrant.private ]; then
     sudo cp -rf /vagrant/code/ /etc/puppetlabs/code/
     sudo cp -rf /vagrant/puppet/hieradata/ /etc/puppetlabs/puppet/hieradata/
-    sudo cp -f /vagrant/puppet/hiera.yaml /etc/puppetlabs/hiera.yaml
+    sudo cp -f /vagrant/puppet/hiera.yaml /etc/puppetlabs/puppet/hiera.yaml
     sudo chown -R puppet:root /etc/puppetlabs/
 fi
 
