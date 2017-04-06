@@ -11,7 +11,7 @@
 ##       xx.xx.xx.* pattern, where '*' is variable.
 ##
 OS_VERSION=$(rpm -qa \*-release | grep -Ei "oracle|redhat|centos-release" | cut -d"-" -f3)
-PUPPET_6_RPM='puppetlabs-release-el-6.noarch'
+PUPPET_6_RPM='puppetlabs-release-pc1-el-6.noarch'
 PUPPET_7_RPM='puppetlabs-release-pc1-el-7.noarch'
 VAGRANT_IP='192.168.0.*'
 
@@ -115,7 +115,7 @@ else
     rpm -e "$PUPPET_7_RPM"
     rpm -Uvh https://yum.puppetlabs.com/"$PUPPET_7_RPM".rpm
 fi
-sudo yum install -y puppet
+sudo yum install -y puppet-agent
 echo 'Puppet agent installed.'
 
 ## get ip address
@@ -166,12 +166,8 @@ else
 
 fi
 
-## set puppet environment (ubuntu 14.04)
-if [ "$OS_VERSION" -lt 7 ]; then
-    /usr/bin/puppet config set config set environment "$PUPPET_ENVIRONMENT"
-else
-    /opt/puppetlabs/bin/puppet config set environment "$PUPPET_ENVIRONMENT"
-fi
+## set puppet environment
+/opt/puppetlabs/bin/puppet config set environment "$PUPPET_ENVIRONMENT"
 
 ## default search domain
 if exists /vagrant/.ssh/*_vagrant.private; then
@@ -190,13 +186,8 @@ printf '%s %s\n' "$HOST_IP" "$HOST_FQDN" | sudo tee -a /etc/hosts
 sudo /etc/init.d/network restart
 
 ## assign puppet agent configuration
-if [ "$OS_VERSION" -lt 7 ]; then
-    /usr/bin/puppet config set server "$HOST_FQDN"
-    /usr/bin/puppet config set certname "$LOCAL_FQDN"
-else
-    /opt/puppetlabs/bin/puppet config set server "$HOST_FQDN"
-    /opt/puppetlabs/bin/puppet config set certname "$LOCAL_FQDN"
-fi
+/opt/puppetlabs/bin/puppet config set server "$HOST_FQDN"
+/opt/puppetlabs/bin/puppet config set certname "$LOCAL_FQDN"
 
 ## prevent ssl collision
 ##
