@@ -10,7 +10,7 @@
 ## Note: some of the below incomplete ip addresses, corresponds to the
 ##       xx.xx.xx.* pattern, where '*' is variable.
 ##
-OS_VERSION=$(rpm -qa \*-release | grep -Ei "oracle|redhat|centos" | cut -d"-" -f3)
+OS_VERSION=$(rpm -qa \*-release | grep -Ei "oracle|redhat|centos-release" | cut -d"-" -f3)
 PUPPET_6_RPM='puppetlabs-release-el-6.noarch'
 PUPPET_7_RPM='puppetlabs-release-pc1-el-7.noarch'
 VAGRANT_IP='192.168.0.*'
