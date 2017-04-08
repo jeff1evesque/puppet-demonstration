@@ -6,7 +6,7 @@
 modules/*
 puppet/*
 !modules/puppet/
-!modules/vagrant/
+!modules/vagrant_puppetserver/
 !puppet/hieradata/*
 !puppet/hieradata/default.yaml
 !puppet/hiera.yaml

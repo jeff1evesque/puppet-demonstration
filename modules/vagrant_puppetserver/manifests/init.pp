@@ -1,13 +1,13 @@
 ### @init.pp, define '/etc/hosts'.
-class vagrant {
-    $hosts = lookup('vagrant')
+class vagrant_puppetserver {
+    $hosts = lookup('vagrant_puppetserver')
     $ip    = $hosts['puppetserver']['ip']
     $fqdn  = $hosts['puppetserver']['fqdn']
 
     file { 'workaround-foreman.service':
         path    => '/etc/systemd/system/workaround-foreman.service',
         ensure  => file,
-        content => dos2unix(template('vagrant/foreman_workaround.erb')),
+        content => dos2unix(template('vagrant_puppetserver/foreman_workaround.erb')),
         mode    => '0711',
         owner   => root,
         group   => root,
@@ -21,7 +21,7 @@ class vagrant {
 
     file { '/etc/hosts':
         ensure  => file,
-        content => dos2unix(template('vagrant/hosts.erb')),
+        content => dos2unix(template('vagrant_puppetserver/hosts.erb')),
         mode    => '0644',
         owner   => root,
         group   => root,
