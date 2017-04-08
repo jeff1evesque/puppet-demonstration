@@ -1,0 +1,8 @@
+---
+# default.yaml, this file contains specific attributes, intended to be
+#     accessed within the puppet 'utility' environment.
+
+vagrant:
+    puppetserver:
+        ip: '192.168.0.10'
+        fqdn: 'foreman.sandbox.local'
