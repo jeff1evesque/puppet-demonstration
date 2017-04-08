@@ -4,4 +4,9 @@
 
 # ignore all modules (except exclamated exceptions)
 modules/*
+puppet/*
 !modules/puppet/
+!modules/vagrant/
+!puppet/hieradata/*
+!puppet/hieradata/default.yaml
+!puppet/hiera.yaml
