@@ -84,13 +84,19 @@ Vagrant.configure(2) do |config|
 
     end
 
-    puppetserver.vm.provision "shell", inline: <<-SHELL
+    puppetserver.vm.provision 'shell', inline: <<-SHELL
       sudo yum install -y dos2unix
-      dos2unix /vagrant/install_scripts/*
+      dos2unix /vagrant/utility/*
     SHELL
 
     ## shell provision: install foreman (with puppetserver)
-    puppetserver.vm.provision :shell, path: 'install_scripts/install_foreman'
+    puppetserver.vm.provision :shell, path: 'utility/install_foreman'
+
+    ## ensure foreman on successive reboot
+    ##
+    ## Note: https://github.com/jeff1evesque/puppet-demonstration/issues/61
+    ##
+    puppetserver.vm.provision 'shell', run: 'always', path: 'utility/restart_network'
 
     ## internal network:  virtual machines can communicate between each other
     ##                    and with the hosting system but not outside.
@@ -154,11 +160,11 @@ Vagrant.configure(2) do |config|
       puppetagent.ssh.password         = $ssh_password
 
       ## shell provision: install puppetagent
-      puppetagent.vm.provision "shell", inline: <<-SHELL
+      puppetagent.vm.provision 'shell', inline: <<-SHELL
         sudo yum install -y dos2unix
-        dos2unix /vagrant/install_scripts/*
+        dos2unix /vagrant/utility/*
       SHELL
-      puppetagent.vm.provision :shell, path: 'install_scripts/install_puppet_agent_centos'
+      puppetagent.vm.provision :shell, path: 'utility/install_puppet_agent_centos'
 
     elsif ENV['AGENT_ENV'] == 'Trusty64'
 
@@ -172,11 +178,11 @@ Vagrant.configure(2) do |config|
       puppetagent.vm.box_download_checksum_type = 'md5'
 
       ## shell provision: install puppetagent
-      puppetagent.vm.provision "shell", inline: <<-SHELL
+      puppetagent.vm.provision 'shell', inline: <<-SHELL
         sudo apt-get install -y dos2unix
-        dos2unix /vagrant/install_scripts/*
+        dos2unix /vagrant/utility/*
       SHELL
-      puppetagent.vm.provision :shell, path: 'install_scripts/install_puppet_agent_ubuntu'
+      puppetagent.vm.provision :shell, path: 'utility/install_puppet_agent_ubuntu'
 
     end
 
