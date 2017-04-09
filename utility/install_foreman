@@ -91,6 +91,8 @@ yum clean all
 yum makecache
 echo 'Puppet rpm packages downloaded.'
 yum -y install epel-release https://yum.theforeman.org/releases/"$FOREMAN"/el7/x86_64/foreman-release.rpm
+yum -y install http://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+yum -y install https://yum.theforeman.org/releases/"$FOREMAN"/el7/x86_64/foreman-release.rpm
 yum -y install foreman-installer
 echo 'Installed foreman-installer.'
 
@@ -98,7 +100,6 @@ echo 'Installed foreman-installer.'
 sed -i "1s/.*/127.0.0.1	$HOSTNAME/"	/etc/hosts
 sed -i "1s/.*/$HOSTNAME/" /etc/hostname
 hostnamectl set-hostname "$HOSTNAME"
-sudo /etc/init.d/network restart
 echo "Configured hostname to $HOSTNAME"
 
 ## clean metadata, and clean presto

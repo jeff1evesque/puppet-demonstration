@@ -8,10 +8,10 @@ This repository is a simple demonstration of virtualized environments
  Specifically, a custom vagrant [base box](https://www.vagrantup.com/docs/boxes/base.html),
  has been created from a [minimal iso](http://isoredirect.centos.org/centos/7/isos/x86_64/CentOS-7-x86_64-Minimal-1511.iso),
  which vagrant provisions via the [`Vagrantfile`](https://github.com/jeff1evesque/puppet-demonstration/blob/master/Vagrantfile),
- using corresponding [install scripts](https://github.com/jeff1evesque/puppet-demonstration/tree/master/install_scripts).
+ using corresponding [install scripts](https://github.com/jeff1evesque/puppet-demonstration/tree/master/utility).
 
 Though, it is recommended to use Centos 7x for both the puppetserver, and
- additional puppetagents, the [install scripts](https://github.com/jeff1evesque/puppet-demonstration/tree/master/install_scripts)
+ additional puppetagents, the [install scripts](https://github.com/jeff1evesque/puppet-demonstration/tree/master/utility)
  are flexible enough to allow puppetagent's to reside in [Centos 6x](https://wiki.centos.org/Download)
  operating systems. Regardless of implementation, when vagrant completes
  provisioning, a puppetserver, with a corresponding [foreman](https://theforeman.org/)
@@ -23,7 +23,7 @@ Though, it is recommended to use Centos 7x for both the puppetserver, and
 
 ![Foreman Hosts](https://cloud.githubusercontent.com/assets/2907085/24819566/170a8e2a-1bb3-11e7-9941-c6655b6add6a.PNG)
 
-**Note:** the provided [install scripts](https://github.com/jeff1evesque/puppet-demonstration/tree/master/install_scripts),
+**Note:** the provided [install scripts](https://github.com/jeff1evesque/puppet-demonstration/tree/master/utility),
  used to provision the corresponding vagrant virtual machine(s), can also be
  used on production-like environments, just remember to replace the default ssl
  keys, along with other system specific configurations.
@@ -75,10 +75,10 @@ cd /path/to/puppet-demonstration/
 vagrant up puppetagent
 ```
 
-Though, the implemented [install scripts](https://github.com/jeff1evesque/puppet-demonstration/tree/master/install_scripts)
+Though, the implemented [install scripts](https://github.com/jeff1evesque/puppet-demonstration/tree/master/utility)
  can be used to provision vagrant, it can be run on non-vagrant systems.
  However, some assumptions are required. For example,
- [`install_foreman`](https://github.com/jeff1evesque/puppet-demonstration/blob/7f08b038c1d9b54c2a464e6f8dc7c85834e25d2b/install_scripts/install_foreman#L23-L27)
+ [`install_foreman`](https://github.com/jeff1evesque/puppet-demonstration/blob/7f08b038c1d9b54c2a464e6f8dc7c85834e25d2b/utility/install_foreman#L23-L27)
  assumes the containing virtual machine, has a defined [proxy](https://en.wikipedia.org/wiki/Proxy_server):
 
 ```bash
@@ -94,7 +94,7 @@ read -p 'Enter your proxy port > ' PROXY_PORT
 **Note:** the vagrant implementation does not require a proxy, which is why the
  same install script, does not prompt, nor make such definitions.
 
-The [install scripts](https://github.com/jeff1evesque/puppet-demonstration/tree/master/install_scripts)
+The [install scripts](https://github.com/jeff1evesque/puppet-demonstration/tree/master/utility)
  can easily be run on corresponding virtual machines:
 
 ```bash
@@ -104,7 +104,7 @@ The [install scripts](https://github.com/jeff1evesque/puppet-demonstration/tree/
 ./install_puppet_agent
 ```
 
-**Note:** when running the above [install scripts](https://github.com/jeff1evesque/puppet-demonstration/tree/master/install_scripts)
+**Note:** when running the above [install scripts](https://github.com/jeff1evesque/puppet-demonstration/tree/master/utility)
  on non-vagrant environments, simply follow the bash prompts.
 
 ## Testing / Execution
@@ -144,3 +144,7 @@ Notice: Applied catalog in 0.02 seconds
 Now, the foreman gui can be used to manage the corresponding agent node, via an
  [internal network](https://github.com/jeff1evesque/puppet-demonstration/blob/3145a783e3822e465419606e8ff96899bd2b116e/Vagrantfile#L99),
  on `192.168.0.10`.
+
+**Note:** some general [modules](https://github.com/jeff1evesque/puppet-demonstration/tree/master/code/modules)
+ have been included in this repository, and left as an exercise to those who wish to implement
+ them within their corresponding foreman gui.

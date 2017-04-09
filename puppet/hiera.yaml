@@ -1,0 +1,14 @@
+---
+# @hiera.yaml, this file contains configurations of how puppet will implement
+#     various yaml files, and it's corresponding attributes.
+#
+
+:backends:
+  - yaml
+
+:yaml:
+  :datadir: /etc/puppetlabs/puppet/hieradata
+
+:hierarchy:
+  - "%{environment}/default"
+  - common
