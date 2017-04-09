@@ -147,4 +147,4 @@ Now, the foreman gui can be used to manage the corresponding agent node, via an
 
 **Note:** some general [modules](https://github.com/jeff1evesque/puppet-demonstration/tree/master/code/modules)
  have been included in this repository, and left as an exercise to those who wish to implement
- them within their corresponding foreman gui. 
+ them within their corresponding foreman gui.
