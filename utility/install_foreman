@@ -72,6 +72,10 @@ if ! [ -f /vagrant/.ssh/puppetserver_vagrant.private ]; then
 
 fi
 
+## add puppet to path
+export PATH=$PATH:/opt/puppetlabs/bin/puppet
+source ~/.bashrc
+
 ## ensure valid GPG keys: recent bug that also exists during attempt to install foreman:
 ##
 ## Note: https://github.com/jeff1evesque/drupal-demonstration/issues/532#issuecomment-250037040

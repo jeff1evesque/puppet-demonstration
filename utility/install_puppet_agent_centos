@@ -104,6 +104,10 @@ if ! exists /vagrant/.ssh/*_vagrant.private; then
 
 fi
 
+## add puppet to path
+export PATH=$PATH:/opt/puppetlabs/bin/puppet
+source ~/.bashrc
+
 ## disable nullglob
 shopt -u nullglob
 
