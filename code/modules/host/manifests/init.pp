@@ -33,5 +33,4 @@ class host {
         path        => '/usr/sbin',
         refreshonly => true,
     }
-	
 }

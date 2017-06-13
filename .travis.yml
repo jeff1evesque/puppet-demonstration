@@ -14,6 +14,8 @@ install:
   - sudo apt-get update
   - sudo apt-get install shellcheck=0.3.3-1~ubuntu14.04.1
   - gem install mdl -v 0.3.1
+  - gem install puppet-lint -v 1.1.0
+  - gem install r10k -v 2.2.0
 
 ## implement linting / unit tests
 script:
@@ -21,3 +23,8 @@ script:
   - find . -type f -exec grep -l '^#!/bin/bash' {} + | xargs shellcheck -e SC2053
   - find . -name '*.sh' -type f -exec shellcheck {} \;
   - mdl . --style test/lint/markdown.rb
+  - sudo find code -name '*.pp' -type f -exec /opt/puppetlabs/bin/puppet parser validate {} \;
+  - sudo find puppet -name '*.pp' -type f -exec /opt/puppetlabs/bin/puppet parser validate {} \;
+  - puppet-lint --no-variable_scope-check --no-ensure_first_param-check code
+  - puppet-lint --no-variable_scope-check --no-ensure_first_param-check puppet
+  - find puppet -name Puppetfile -exec sh -c 'cd "${1%/*}" && r10k puppetfile check Puppetfile' _ {} \;
