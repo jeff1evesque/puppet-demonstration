@@ -22,7 +22,6 @@ script:
   - find . -type f -exec grep -l '^#!/bin/bash' {} + | xargs shellcheck -e SC2053
   - find . -name '*.sh' -type f -exec shellcheck {} \;
   - mdl . --style test/lint/markdown.rb
-  - sudo find puppet/environment/*/manifests -name '*.pp' -type f -exec /opt/puppetlabs/bin/puppet parser validate {} \;
-  - sudo find puppet/environment/*/modules -name '*.pp' -type f -exec /opt/puppetlabs/bin/puppet parser validate {} \;
+  - sudo find puppet -name '*.pp' -type f -exec /opt/puppetlabs/bin/puppet parser validate {} \;
   - puppet-lint --no-variable_scope-check --no-ensure_first_param-check puppet/environment/*/modules
   - find puppet -name Puppetfile -exec sh -c 'cd "${1%/*}" && r10k puppetfile check Puppetfile' _ {} \;
