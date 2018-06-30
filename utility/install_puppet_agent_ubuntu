@@ -35,15 +35,15 @@ else
         [ "${CORRECT_HOST,,}" != 'ok' ]; do
 
         ## acquire host fqdn
-        read -p 'Enter host fqdn > ' HOST_FQDN
+        read -rp 'Enter host fqdn > ' HOST_FQDN
 
         ## acquire host ip
-        read -p 'Enter host ip > ' HOST_IP
+        read -rp 'Enter host ip > ' HOST_IP
 
         ## verify submission
         echo "Your host's fqdn: $HOST_FQDN"
         echo "Your host's ip: $HOST_IP"
-        read -p 'Is this correct (y) > ' CORRECT_HOST
+        read -rp 'Is this correct (y) > ' CORRECT_HOST
     done
 
 fi
@@ -71,7 +71,7 @@ if ! exists /vagrant/.ssh/*_vagrant.private; then
 
         ## verify submission
         echo "Your proxy: $PROXY_IP:$PROXY_PORT"
-        read -p 'Is this correct (y) > ' CORRECT_PROXY
+        read -rp 'Is this correct (y) > ' CORRECT_PROXY
 
         if [ "${CORRECT_PROXY,,}" == 'y' ] || \
         [ "${CORRECT_PROXY,,}" == 'yes' ] || \
@@ -81,10 +81,10 @@ if ! exists /vagrant/.ssh/*_vagrant.private; then
         fi
 
         ## acquire proxy ip
-        read -p 'Enter your proxy ip > ' PROXY_IP
+        read -rp 'Enter your proxy ip > ' PROXY_IP
 
         ## acquire proxy port
-        read -p 'Enter your proxy port > ' PROXY_PORT
+        read -rp 'Enter your proxy port > ' PROXY_PORT
     done
 
     ## setup proxy: lasts until reboot
@@ -151,11 +151,11 @@ else
         [ "${CORRECT_ENVIRONMENT,,}" != 'ok' ]; do
 
         ## acquire host fqdn
-        read -p 'Name of your puppet environment > ' PUPPET_ENVIRONMENT
+        read -rp 'Name of your puppet environment > ' PUPPET_ENVIRONMENT
 
         ## verify submission
         echo "Your puppet environment: $PUPPET_ENVIRONMENT"
-        read -p 'Is this correct (y) > ' CORRECT_ENVIRONMENT
+        read -rp 'Is this correct (y) > ' CORRECT_ENVIRONMENT
     done
 
     ## create puppet environment directory
