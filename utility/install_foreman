@@ -74,7 +74,7 @@ fi
 
 ## add puppet to path
 export PATH=$PATH:/opt/puppetlabs/bin/puppet
-source ~/.bashrc
+source "$HOME"/.bashrc
 
 ## ensure valid GPG keys: recent bug that also exists during attempt to install foreman:
 ##
