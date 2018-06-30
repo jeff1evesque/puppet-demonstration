@@ -21,14 +21,14 @@ if ! [ -f /vagrant/.ssh/puppetserver_vagrant.private ]; then
         [ "${CORRECT_PROXY,,}" != 'ok' ]; do
 
         ## acquire proxy ip
-        read -p 'Enter your proxy ip > ' PROXY_IP
+        read -rp 'Enter your proxy ip > ' PROXY_IP
 
         ## acquire proxy port
-        read -p 'Enter your proxy port > ' PROXY_PORT
+        read -rp 'Enter your proxy port > ' PROXY_PORT
 
         ## verify submission
         echo "Your proxy: $PROXY_IP:$PROXY_PORT"
-        read -p 'Is this correct (y) > ' CORRECT_PROXY
+        read -rp 'Is this correct (y) > ' CORRECT_PROXY
     done
 
     ## setup proxy: lasts until reboot
