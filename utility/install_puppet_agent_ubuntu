@@ -99,6 +99,7 @@ fi
 
 ## add puppet to path
 export PATH=$PATH:/opt/puppetlabs/bin/puppet
+## shellcheck source=/dev/null
 . ~/.bashrc
 
 ## disable nullglob
