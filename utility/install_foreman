@@ -114,12 +114,15 @@ echo 'Cleaned metadata, and presto.'
 ##
 ## Note: https://theforeman.org/manuals/1.9/#firewall-configuration
 ##
-firewall-cmd --zone=public --add-service=http --permanent
-firewall-cmd --zone=public --add-service=https --permanent
-firewall-cmd --permanent --add-port=69/tcp --permanent
-firewall-cmd --permanent --add-port=80/tcp --permanent
-firewall-cmd --permanent --add-port=443/tcp --permanent
-firewall-cmd --zone=public --add-port=8140/tcp --permanent
+sudo yum -y install firewalld
+sudo service firewalld start
+firewall-cmd --permanent --zone=public --add-service=http
+firewall-cmd --permanent --zone=public --add-service=https
+firewall-cmd --permanent --add-port=53/tcp
+firewall-cmd --permanent --add-port=69/tcp
+firewall-cmd --permanent --add-port=80/tcp
+firewall-cmd --permanent --add-port=443/tcp
+firewall-cmd --permanent --zone=public --add-port=8140/tcp
 firewall-cmd --reload
 firewall-cmd --zone=public --list-all
 echo 'Firewalld rules implemented.'
