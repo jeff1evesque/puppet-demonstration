@@ -46,13 +46,13 @@ if ! [ -f /vagrant/.ssh/puppetserver_vagrant.private ]; then
         [ "${CORRECT_FOREMAN,,}" != 'true' ] && \
         [ "${CORRECT_FOREMAN,,}" != 'ok' ]; do
 
-        read -p "Install foreman $FOREMAN (y) > " CORRECT_FOREMAN
+        read -rp "Install foreman $FOREMAN (y) > " CORRECT_FOREMAN
 
         if [ "${CORRECT_FOREMAN,,}" != 'y' ] && \
             [ "${CORRECT_FOREMAN,,}" != 'yes' ] && \
             [ "${CORRECT_FOREMAN,,}" != 'true' ] && \
             [ "${CORRECT_FOREMAN,,}" != 'ok' ]; then
-            read -p "Enter desired foreman version (i.e. '$FOREMAN', or 'latest') > " FOREMAN
+            read -rp "Enter desired foreman version (i.e. '$FOREMAN', or 'latest') > " FOREMAN
         fi
     done
 
