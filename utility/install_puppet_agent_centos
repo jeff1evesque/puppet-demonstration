@@ -106,7 +106,7 @@ fi
 
 ## add puppet to path
 export PATH=$PATH:/opt/puppetlabs/bin/puppet
-source "$HOME"/.bashrc
+. ~/.bashrc
 
 ## disable nullglob
 shopt -u nullglob
