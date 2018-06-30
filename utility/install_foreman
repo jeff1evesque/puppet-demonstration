@@ -156,6 +156,11 @@ if [ -f /vagrant/.ssh/puppetserver_vagrant.private ]; then
     sudo chown -R puppet:root /etc/puppetlabs/
 fi
 
+## install r10k + add to path
+sudo gem install r10k
+export PATH=$PATH:/usr/local/bin/r10k
+. ~/.bashrc
+
 ## reboot to apply above changes
 ##
 ## Note: only a vagrant implementation should have a private ssh key named
