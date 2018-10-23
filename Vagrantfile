@@ -57,7 +57,7 @@ Vagrant.configure(2) do |config|
         run 'curl -o .ssh/puppetserver_vagrant.private https://raw.githubusercontent.com/jeff1evesque/drupal-demonstration/master/centos7x/.ssh/private'
       end
 
-      puppetserver.vm.box         = 'jeff1evesque/centos7x'
+      puppetserver.vm.box         = 'ubuntu/centos7x'
       puppetserver.vm.box_version = '1.0.2'
       $ssh_username               = 'provisioner'
       $ssh_password               = 'vagrant-provision'
@@ -73,7 +73,7 @@ Vagrant.configure(2) do |config|
 
     elsif ENV['SERVER_ENV'] == 'Trusty64'
 
-      atlas_repo  = 'jeff1evesque'
+      atlas_repo  = 'ubuntu'
       atlas_box   = 'trusty64'
       box_version = '1.1.0'
 
@@ -145,7 +145,7 @@ Vagrant.configure(2) do |config|
         run 'curl -o .ssh/puppetagent_vagrant.private https://raw.githubusercontent.com/jeff1evesque/drupal-demonstration/master/centos7x/.ssh/private'
       end
 
-      puppetagent.vm.box         = 'jeff1evesque/centos7x'
+      puppetagent.vm.box         = 'ubuntu/centos7x'
       puppetagent.vm.box_version = '1.0.2'
       $ssh_username              = 'provisioner'
       $ssh_password              = 'vagrant-provision'
@@ -164,11 +164,11 @@ Vagrant.configure(2) do |config|
         sudo yum install -y dos2unix
         dos2unix /vagrant/utility/*
       SHELL
-      puppetagent.vm.provision :shell, path: 'utility/install_puppet_agent_centos'
+      puppetagent.vm.provision :shell, path: 'utility/install_puppet_agent'
 
     elsif ENV['AGENT_ENV'] == 'Trusty64'
 
-      atlas_repo        = 'jeff1evesque'
+      atlas_repo        = 'ubuntu'
       atlas_box         = 'trusty64'
       atlas_box_version = '1.1.0'
 
@@ -182,7 +182,7 @@ Vagrant.configure(2) do |config|
         sudo apt-get install -y dos2unix
         dos2unix /vagrant/utility/*
       SHELL
-      puppetagent.vm.provision :shell, path: 'utility/install_puppet_agent_ubuntu'
+      puppetagent.vm.provision :shell, path: 'utility/install_puppet_agent'
 
     end
 
