@@ -1,0 +1,200 @@
+#!/bin/bash
+
+##
+## variables
+##
+## @HOST_FQDN, this needs match the result of running the 'hostnamectl' command
+##     from the environment running the puppetserver / puppetmaster.
+##
+## @HOST_IP, address that corresponds to the puppetserver.
+##
+## Note: some of the below incomplete ip addresses, corresponds to the
+##       xx.xx.xx.* pattern, where '*' is variable.
+##
+PUPPET_ENVIRONMENT='production'
+PUPPET_6_RPM='puppet5-release-el-6.noarch'
+PUPPET_7_RPM='puppet5-release-el-7.noarch'
+PUPPET_PATH='/opt/puppetlabs/bin'
+
+if [[ $(cat /etc/redhat-release | grep 'Red Hat') ]]; then
+    OS_VERSION=$(rpm -q --queryformat '%{RELEASE}' redhat-release-server | awk -F. '{print $1}')
+elif [[ $(cat /etc/redhat-release | grep 'CentOS') ]]; then
+    OS_VERSION=$(rpm -qa \*-release | grep -Ei "oracle|redhat|centos" | cut -d"-" -f3)
+else
+    OS_VERSION=$(lsb_release -r -s)
+fi
+
+## custom function
+exists() { [[ -e $1 ]]; }
+
+## enable nullglob
+shopt -s nullglob
+
+## local variables
+CORRECT_HOST='n'
+
+## prompt host fqdn and ip
+while [ "${CORRECT_HOST,,}" != 'y' ] && \
+    [ "${CORRECT_HOST,,}" != 'yes' ] && \
+    [ "${CORRECT_HOST,,}" != 'true' ] && \
+    [ "${CORRECT_HOST,,}" != 'ok' ]; do
+
+    ## acquire host fqdn
+    read -rp 'Enter host fqdn > ' HOST_FQDN
+
+    ## acquire host ip
+    read -rp 'Enter host ip > ' HOST_IP
+
+    ## verify submission
+    echo "Your host's fqdn: $HOST_FQDN"
+    echo "Your host's ip: $HOST_IP"
+    read -rp 'Is this correct (y) > ' CORRECT_HOST
+done
+
+## get hostname + centos parameters
+if [  -n "$(uname -a | grep Ubuntu)" ]; then
+    HOSTNAME=$(hostname)
+else
+    if [[ "$OS_VERSION" -lt 7 ]]; then
+        HOSTNAME=$(hostname)
+    else
+        HOSTNAME=$(hostnamectl --static)
+    fi
+fi
+
+##
+## set proxy, conditionally set additional variables
+##
+CORRECT_PROXY='n'
+PROXY_IP='null'
+PROXY_PORT='null'
+
+## prompt proxy configurations
+while [ "${CORRECT_PROXY,,}" != 'y' ] && \
+    [ "${CORRECT_PROXY,,}" != 'yes' ] && \
+    [ "${CORRECT_PROXY,,}" != 'true' ] && \
+    [ "${CORRECT_PROXY,,}" != 'ok' ]; do
+
+    ## verify submission
+    echo "Your proxy: $PROXY_IP:$PROXY_PORT"
+    read -rp 'Is this correct (y) > ' CORRECT_PROXY
+
+    if [ "${CORRECT_PROXY,,}" == 'y' ] || \
+        [ "${CORRECT_PROXY,,}" == 'yes' ] || \
+        [ "${CORRECT_PROXY,,}" == 'true' ] || \
+        [ "${CORRECT_PROXY,,}" == 'ok' ]; then
+            break
+    fi
+
+    ## acquire proxy ip
+    read -rp 'Enter your proxy ip > ' PROXY_IP
+
+    ## acquire proxy port
+    read -rp 'Enter your proxy port > ' PROXY_PORT
+
+    ## setup proxy
+    if [ ! -z ${PROXY_IP+x} ] && [ ! -z ${PROXY_PORT+x} ]; then
+        ## lasts until reboot
+        export http_proxy=http://"$PROXY_IP:$PROXY_PORT"
+        export https_proxy=https://"$PROXY_IP:$PROXY_PORT"
+
+        ## persistent after reboot
+        sudo sh -c "echo \"http_proxy=http://$PROXY_IP:$PROXY_PORT\" >> /etc/environment"
+        sudo sh -c "echo \"https_proxy=https://$PROXY_IP:$PROXY_PORT\" >> /etc/environment"
+    fi
+done
+
+## add puppet to path
+export PATH="$PATH:$PUPPET_PATH"
+echo "export PATH='$PATH:$PUPPET_PATH'" >> ~/.bashrc
+
+## disable nullglob
+shopt -u nullglob
+
+if [  -n "$(uname -a | grep Ubuntu)" ]; then
+    ## enable puppet repository (ubuntu 14.04)
+    wget https://apt.puppetlabs.com/puppet5-release-trusty.deb
+    sudo dpkg -i puppet5-release-trusty.deb
+    sudo apt-get update
+    echo 'Puppet package repository enabled.'
+
+    ## install puppetagent
+    sudo apt-get install -y puppet-agent
+    rm -rf puppet5-release-trusty.deb*
+    echo 'Puppet agent installed.'
+
+else
+    ## install puppetagent
+    if [[ "$OS_VERSION" -lt 7 ]]; then
+        rpm -e "$PUPPET_6_RPM"
+        rpm -ivh https://yum.puppetlabs.com/puppet5/"$PUPPET_6_RPM".rpm
+    else
+        rpm -e "$PUPPET_7_RPM"
+        rpm -Uvh https://yum.puppetlabs.com/puppet5/"$PUPPET_7_RPM".rpm
+    fi
+
+    sudo yum update
+    sudo yum install -y puppet-agent
+    echo 'Puppet agent installed.'
+fi
+
+## get ip address
+while IFS=' /' read -r _ dev _ ip _; do
+    [[ $dev == en* ]] || [[ $dev == eth* ]] || continue
+    IP_ADDRESS="$ip"
+done < <(ip -o -4 addr show)
+
+## assign puppet agent configuration
+if [ -z ${PUPPET_ENVIRONMENT+x} ]; then
+
+    ## local variables
+    CORRECT_ENVIRONMENT='n'
+
+    ## prompt puppet environment
+    while [ "${CORRECT_ENVIRONMENT,,}" != 'y' ] && \
+        [ "${CORRECT_ENVIRONMENT,,}" != 'yes' ] && \
+        [ "${CORRECT_ENVIRONMENT,,}" != 'true' ] && \
+        [ "${CORRECT_ENVIRONMENT,,}" != 'ok' ]; do
+
+        ## acquire host fqdn
+        read -rp 'Name of your puppet environment > ' PUPPET_ENVIRONMENT
+
+        ## verify submission
+        echo "Your puppet environment: $PUPPET_ENVIRONMENT"
+        read -rp 'Is this correct (y) > ' CORRECT_ENVIRONMENT
+    done
+
+fi
+
+## create puppet environment directory
+sudo mkdir -p "/etc/puppetlabs/code/environments/$PUPPET_ENVIRONMENT"
+
+## set puppet environment
+sudo /opt/puppetlabs/bin/puppet config set environment "$PUPPET_ENVIRONMENT"
+
+## default search domain
+LOCAL_FQDN="$HOSTNAME"
+
+##
+## append local fqdn + add reference of puppetserver
+##
+## Note: there should only be one corresponding line in the
+##       '/etc/hosts', for the 'LOCAL_FQDN', and 'HOST_FQDN'.
+##
+sudo sh -c "sed -i \"/127.0.0.1/s/$/	$LOCAL_FQDN/\" /etc/hosts"
+printf '%s %s\n' "$HOST_IP" "$HOST_FQDN" | sudo tee -a /etc/hosts
+sudo ifdown eth0 && sudo ifup eth0
+
+## assign puppet agent configuration
+sudo /opt/puppetlabs/bin/puppet config set server "$HOST_FQDN"
+sudo /opt/puppetlabs/bin/puppet config set certname "$LOCAL_FQDN"
+
+##
+## prevent ssl collision
+##
+## Note: sometimes when ssl certificates exists, errors prevent puppetagents
+##       from connecting with the puppetserver.
+##
+if [ -f /etc/puppetlabs/puppet/ssl ]; then
+    sudo mv /etc/puppetlabs/puppet/ssl /etc/puppetlabs/puppet/ssl.bk
+fi
