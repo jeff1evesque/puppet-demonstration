@@ -51,13 +51,13 @@ while [ "${CORRECT_FOREMAN,,}" != 'y' ] && \
     [ "${CORRECT_FOREMAN,,}" != 'true' ] && \
     [ "${CORRECT_FOREMAN,,}" != 'ok' ]; do
 
-    read -p "Install foreman $FOREMAN (y) > " CORRECT_FOREMAN
+    read -rp "Install foreman $FOREMAN (y) > " CORRECT_FOREMAN
 
     if [ "${CORRECT_FOREMAN,,}" != 'y' ] && \
         [ "${CORRECT_FOREMAN,,}" != 'yes' ] && \
         [ "${CORRECT_FOREMAN,,}" != 'true' ] && \
         [ "${CORRECT_FOREMAN,,}" != 'ok' ]; then
-        read -p "Enter desired foreman version (i.e. '$FOREMAN', or 'latest') > " FOREMAN
+        read -rp "Enter desired foreman version (i.e. '$FOREMAN', or 'latest') > " FOREMAN
     fi
 done
 
@@ -72,7 +72,7 @@ export PATH="$PATH:$PUPPET_PATH:$R10K_PATH"
 echo "export PATH='$PATH:$PUPPET_PATH:$R10K_PATH'" >> ~/.bashrc
 
 ## enable RHEL Optional and RHSCL repos
-if [[ $(cat /etc/redhat-release | grep 'Red Hat') ]]; then
+if grep -q 'Red Hat' /etc/redhat-release; then
     yum-config-manager --enable rhel-7-server-optional-rpms rhel-server-rhscl-7-rpms
     echo 'installed rhel optional repos'
 fi
@@ -134,7 +134,7 @@ echo 'Firewalld rules implemented.'
 sudo setsebool -P httpd_read_user_content 1
 
 ## install foreman
-read -sp 'Enter password > ' FOREMAN_PASSWORD
+read -rsp 'Enter password > ' FOREMAN_PASSWORD
 foreman-installer --foreman-admin-password="$FOREMAN_PASSWORD"
 echo 'Foreman installed.'
 

@@ -16,9 +16,9 @@ PUPPET_6_RPM='puppet5-release-el-6.noarch'
 PUPPET_7_RPM='puppet5-release-el-7.noarch'
 PUPPET_PATH='/opt/puppetlabs/bin'
 
-if [[ $(cat /etc/redhat-release | grep 'Red Hat') ]]; then
+if grep -q 'Red Hat' /etc/redhat-release; then
     OS_VERSION=$(rpm -q --queryformat '%{RELEASE}' redhat-release-server | awk -F. '{print $1}')
-elif [[ $(cat /etc/redhat-release | grep 'CentOS') ]]; then
+elif grep -q 'CentOS' /etc/redhat-release; then
     OS_VERSION=$(rpm -qa \*-release | grep -Ei "oracle|redhat|centos" | cut -d"-" -f3)
 else
     OS_VERSION=$(lsb_release -r -s)
@@ -52,7 +52,7 @@ while [ "${CORRECT_HOST,,}" != 'y' ] && \
 done
 
 ## get hostname + centos parameters
-if [  -n "$(uname -a | grep Ubuntu)" ]; then
+if uname | grep -q Ubuntu; then
     HOSTNAME=$(hostname)
 else
     if [[ "$OS_VERSION" -lt 7 ]]; then
@@ -93,7 +93,7 @@ while [ "${CORRECT_PROXY,,}" != 'y' ] && \
     read -rp 'Enter your proxy port > ' PROXY_PORT
 
     ## setup proxy
-    if [ ! -z ${PROXY_IP+x} ] && [ ! -z ${PROXY_PORT+x} ]; then
+    if [ ! -z "${PROXY_IP+x}" ] && [ ! -z "${PROXY_PORT+x}" ]; then
         ## lasts until reboot
         export http_proxy=http://"$PROXY_IP:$PROXY_PORT"
         export https_proxy=https://"$PROXY_IP:$PROXY_PORT"
@@ -111,7 +111,7 @@ echo "export PATH='$PATH:$PUPPET_PATH'" >> ~/.bashrc
 ## disable nullglob
 shopt -u nullglob
 
-if [  -n "$(uname -a | grep Ubuntu)" ]; then
+if uname | grep -q Linux; then
     ## enable puppet repository (ubuntu 14.04)
     wget https://apt.puppetlabs.com/puppet5-release-trusty.deb
     sudo dpkg -i puppet5-release-trusty.deb
@@ -137,12 +137,6 @@ else
     sudo yum install -y puppet-agent
     echo 'Puppet agent installed.'
 fi
-
-## get ip address
-while IFS=' /' read -r _ dev _ ip _; do
-    [[ $dev == en* ]] || [[ $dev == eth* ]] || continue
-    IP_ADDRESS="$ip"
-done < <(ip -o -4 addr show)
 
 ## assign puppet agent configuration
 if [ -z ${PUPPET_ENVIRONMENT+x} ]; then
