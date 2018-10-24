@@ -52,7 +52,7 @@ while [ "${CORRECT_HOST,,}" != 'y' ] && \
 done
 
 ## get hostname + centos parameters
-if uname | grep -q Ubuntu; then
+if [ -f /etc/lsb-release ]; then
     HOSTNAME=$(hostname)
 else
     if [[ "$OS_VERSION" -lt 7 ]]; then
@@ -111,7 +111,7 @@ echo "export PATH='$PATH:$PUPPET_PATH'" >> ~/.bashrc
 ## disable nullglob
 shopt -u nullglob
 
-if uname | grep -q Linux; then
+if [ -f /etc/lsb-release ]; then
     ## enable puppet repository (ubuntu 14.04)
     wget https://apt.puppetlabs.com/puppet5-release-trusty.deb
     sudo dpkg -i puppet5-release-trusty.deb
