@@ -52,7 +52,7 @@ while [ "${CORRECT_HOST,,}" != 'y' ] && \
 done
 
 ## get hostname + centos parameters
-if if uname | grep -q Ubuntu; then
+if uname | grep -q Ubuntu; then
     HOSTNAME=$(hostname)
 else
     if [[ "$OS_VERSION" -lt 7 ]]; then
