@@ -138,12 +138,6 @@ else
     echo 'Puppet agent installed.'
 fi
 
-## get ip address
-while IFS=' /' read -r _ dev _ ip _; do
-    [[ $dev == en* ]] || [[ $dev == eth* ]] || continue
-    IP_ADDRESS="$ip"
-done < <(ip -o -4 addr show)
-
 ## assign puppet agent configuration
 if [ -z ${PUPPET_ENVIRONMENT+x} ]; then
 
