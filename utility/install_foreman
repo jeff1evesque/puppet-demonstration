@@ -135,8 +135,7 @@ echo 'Firewalld rules implemented.'
 sudo setsebool -P httpd_read_user_content 1
 
 ## install foreman
-read -sp 'Enter password > ' FOREMAN_PASSWORD
-foreman-installer --foreman-initial-admin-password="$FOREMAN_PASSWORD"
+foreman-installer
 echo 'Foreman installed.'
 
 ## ensure ownership
