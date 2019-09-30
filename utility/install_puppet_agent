@@ -12,16 +12,24 @@
 ##       xx.xx.xx.* pattern, where '*' is variable.
 ##
 PUPPET_ENVIRONMENT='production'
-PUPPET_6_RPM='puppet5-release-el-6.noarch'
-PUPPET_7_RPM='puppet5-release-el-7.noarch'
+PUPPET_6_RPM='puppet6-release-el-6.noarch'
+PUPPET_7_RPM='puppet6-release-el-7.noarch'
 PUPPET_PATH='/opt/puppetlabs/bin'
 
 if grep -q 'Red Hat' /etc/redhat-release; then
     OS_VERSION=$(rpm -q --queryformat '%{RELEASE}' redhat-release-server | awk -F. '{print $1}')
+    sudo yum install -y wget
+
 elif grep -q 'CentOS' /etc/redhat-release; then
     OS_VERSION=$(rpm -qa \*-release | grep -Ei "oracle|redhat|centos" | cut -d"-" -f3)
+    sudo yum install -y wget
+
 else
     OS_VERSION=$(lsb_release -r -s)
+    CODENAME=$(grep "VERSION=" /etc/os-release | awk -F= {' print $2'}| sed s/\"//g | sed s/[0-9]//g | sed s/\)$//g | sed s/\(//g)
+    PUPPET_DEB="puppet5-release-$CODENAME"
+    sudo apt-get install -y wget
+
 fi
 
 ## custom function
@@ -65,6 +73,7 @@ fi
 ##
 ## set proxy, conditionally set additional variables
 ##
+## prompt proxy configurations
 CORRECT_PROXY='n'
 PROXY_IP='null'
 PROXY_PORT='null'
@@ -112,29 +121,29 @@ echo "export PATH='$PATH:$PUPPET_PATH'" >> ~/.bashrc
 shopt -u nullglob
 
 if [ -f /etc/lsb-release ]; then
-    ## enable puppet repository (ubuntu 14.04)
-    wget https://apt.puppetlabs.com/puppet5-release-trusty.deb
-    sudo dpkg -i puppet5-release-trusty.deb
+    ## enable puppet repository (debian)
+    wget https://apt.puppetlabs.com/"$PUPPET_DEB".deb
+    sudo dpkg -i "$PUPPET_DEB".deb
     sudo apt-get update
     echo 'Puppet package repository enabled.'
 
     ## install puppetagent
     sudo apt-get install -y puppet-agent
-    rm -rf puppet5-release-trusty.deb*
+    rm -rf "$PUPPET_DEB_RPM".deb*
     echo 'Puppet agent installed.'
 
 else
     ## install puppetagent
     if [[ "$OS_VERSION" -lt 7 ]]; then
-        rpm -e "$PUPPET_6_RPM"
-        rpm -ivh https://yum.puppetlabs.com/puppet5/"$PUPPET_6_RPM".rpm
+        wget https://yum.puppetlabs.com/puppet6/"$PUPPET_6_RPM".rpm
+        rpm -i "${PUPPET_6_RPM}.rpm"
     else
-        rpm -e "$PUPPET_7_RPM"
-        rpm -Uvh https://yum.puppetlabs.com/puppet5/"$PUPPET_7_RPM".rpm
+        wget https://yum.puppetlabs.com/puppet6/"$PUPPET_7_RPM".rpm
+        rpm -i "${PUPPET_7_RPM}.rpm"
     fi
 
-    sudo yum update
-    sudo yum install -y puppet-agent
+    sudo yum -y update
+    sudo yum -y install puppet-agent
     echo 'Puppet agent installed.'
 fi
 
