@@ -1,7 +1,8 @@
 #!/bin/bash
 
 ## variables
-FOREMAN='1.19.0'
+FOREMAN='1.23.0'
+FOREMAN_SHORT="${FOREMAN%.*}"
 HOSTNAME=$(hostname)
 
 ## local variables
@@ -88,14 +89,14 @@ sudo yum-config-manager --enable \
 sudo yum install -y mod_passenger || sudo yum-config-manager --enable cr \
     && sudo yum install -y mod_passenger
 
-## install puppet5x
-rpm -ivh http://yum.puppetlabs.com/puppet5/puppet5-release-el-7.noarch.rpm
+## install puppet6x
+rpm -Uvh https://yum.puppet.com/puppet6-release-el-7.noarch.rpm
 yum install -y puppet-agent
-echo 'puppet 5x installed'
+echo 'puppet 6x installed'
 
 ## enable epel and foreman repositories
 rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-yum -y install http://yum.theforeman.org/releases/1.19/el7/x86_64/foreman-release.rpm
+yum -y install "http://yum.theforeman.org/releases/$FOREMAN_SHORT/el7/x86_64/foreman-release.rpm"
 echo 'epel and foreman repositories enabled.'
 
 ## download + run foreman installer
@@ -134,8 +135,8 @@ echo 'Firewalld rules implemented.'
 sudo setsebool -P httpd_read_user_content 1
 
 ## install foreman
-read -rsp 'Enter password > ' FOREMAN_PASSWORD
-foreman-installer --foreman-admin-password="$FOREMAN_PASSWORD"
+read -sp 'Enter password > ' FOREMAN_PASSWORD
+foreman-installer --foreman-initial-admin-password="$FOREMAN_PASSWORD"
 echo 'Foreman installed.'
 
 ## ensure ownership
