@@ -137,9 +137,11 @@ else
     if [[ "$OS_VERSION" -lt 7 ]]; then
         wget https://yum.puppetlabs.com/puppet6/"$PUPPET_6_RPM".rpm
         rpm -i "${PUPPET_6_RPM}.rpm"
+        rm -f "${PUPPET_6_RPM}.rpm"
     else
         wget https://yum.puppetlabs.com/puppet6/"$PUPPET_7_RPM".rpm
         rpm -i "${PUPPET_7_RPM}.rpm"
+        rm -f "${PUPPET_6_RPM}.rpm"
     fi
 
     sudo yum -y update
