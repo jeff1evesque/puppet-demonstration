@@ -93,7 +93,7 @@ while [ "${CORRECT_PROXY,,}" != 'y' ] && \
     read -rp 'Enter your proxy port > ' PROXY_PORT
 
     ## setup proxy
-    if [ ! -z "${PROXY_IP+x}" ] && [ ! -z "${PROXY_PORT+x}" ]; then
+    if [ -n "${PROXY_IP+x}" ] && [ -n "${PROXY_PORT+x}" ]; then
         ## lasts until reboot
         export http_proxy=http://"$PROXY_IP:$PROXY_PORT"
         export https_proxy=https://"$PROXY_IP:$PROXY_PORT"

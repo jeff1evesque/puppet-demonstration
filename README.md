@@ -17,7 +17,7 @@ Though, it is recommended to use Centos 7x for both the puppetserver, and
  provisioning, a puppetserver, with a corresponding [foreman](https://theforeman.org/)
  gui, is available on the host via the ip `192.168.0.10`, which can be used to manage various puppetagent nodes:
 
-![Foreman Login](https://user-images.githubusercontent.com/2907085/47330360-f8cbe680-d645-11e8-9616-f64ec186323f.PNG)
+![Foreman Login](https://user-images.githubusercontent.com/2907085/65845026-80b27a00-e306-11e9-83c3-124a82a4b51a.png)
 
 ---
 
