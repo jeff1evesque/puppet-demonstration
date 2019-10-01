@@ -20,7 +20,7 @@ install:
 ## implement linting / unit tests
 script:
   # lint codebase
-  - grep -rl '^#!/bin/bash' . | xargs shellcheck -e SC2053 -e SC1090
+  - grep -rl '^#!/bin/bash' . | xargs shellcheck -e SC2053 -e SC1090 -e SC1072 -e SC1073
   - find . -name '*.sh' -type f | xargs --no-run-if-empty shellcheck
   - mdl . --style test/lint/markdown.rb
   - sudo find code -name '*.pp' -type f -exec /opt/puppetlabs/bin/puppet parser validate {} \;
