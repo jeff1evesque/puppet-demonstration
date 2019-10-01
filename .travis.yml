@@ -21,7 +21,7 @@ install:
 script:
   # lint codebase
   - grep -rl '^#!/bin/bash' . | xargs shellcheck -e SC2053 -e SC1090
-  - find . -name '*.sh' -type f | xargs shellcheck
+  - find . -name '*.sh' -type f | xargs --no-run-if-empty shellcheck
   - mdl . --style test/lint/markdown.rb
   - sudo find code -name '*.pp' -type f -exec /opt/puppetlabs/bin/puppet parser validate {} \;
   - sudo find puppet -name '*.pp' -type f -exec /opt/puppetlabs/bin/puppet parser validate {} \;
