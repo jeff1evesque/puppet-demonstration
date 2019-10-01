@@ -26,7 +26,7 @@ elif grep -q 'CentOS' /etc/redhat-release; then
 
 else
     OS_VERSION=$(lsb_release -r -s)
-    CODENAME=$(grep "VERSION=" /etc/os-release | awk -F= {' print $2'} | sed s/\"//g | sed s/[0-9]//g | sed s/\)$//g | sed s/\(//g
+    CODENAME=$(grep "VERSION=" /etc/os-release | awk -F= {' print $2';} | sed s/\"//g | sed s/[0-9]//g | sed s/\)$//g | sed s/\(//g
 jessie)
     PUPPET_DEB="puppet5-release-$CODENAME"
     sudo apt-get install -y wget
