@@ -144,5 +144,9 @@ sudo chown -R puppet:root /etc/puppetlabs/
 ## allow all puppetagents to connect to puppetserver
 echo '*' >> /etc/puppetlabs/puppet/autosign.conf
 
+## ensure r10k > 3.x
+rm -rf /usr/local/bin/r10k
+ln -s /opt/puppetlabs/puppet/bin/r10k /usr/local/bin/r10k
+
 ## reboot to apply above changes
 sudo reboot
