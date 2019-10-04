@@ -1,7 +1,8 @@
-#!/bin/bash
+#!/bin/bash -i
 
 ## variables
 FOREMAN='1.23.0'
+RUBY_VERSION='2.6.0'
 FOREMAN_SHORT="${FOREMAN%.*}"
 HOSTNAME=$(hostname)
 
@@ -64,13 +65,21 @@ done
 
 ## install ruby + r10k
 sudo yum update -y
-sudo yum install -y ruby
-gem install r10k -v 2.1.1
-gem install rake -v 12.3.1
+sudo yum install -y curl gpg gcc gcc-c++ make
+sudo gpg --keyserver hkp://pool.sks-keyservers.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
+curl -sSL https://get.rvm.io | sudo bash -s stable
+sudo usermod -a -G rvm `whoami`
+
+rvm install "ruby-${RUBY_VERSION}"
+rvm --default use "ruby-${RUBY_VERSION}"
+gem install r10k rake
 
 ## add puppet + r10k to path
-export PATH="$PATH:$PUPPET_PATH:$R10K_PATH"
-echo "export PATH='$PATH:$PUPPET_PATH:$R10K_PATH'" >> ~/.bashrc
+PATH_PATTERN="${PATH}:${PUPPET_PATH}:${R10K_PATH}"
+if grep -xq "$PATH_PATTERN" ~/.bashrc; then
+    export PATH="$PATH_PATTERN"
+    echo "export PATH='$PATH_PATTERN'" >> ~/.bashrc
+fi  
 
 ## enable RHEL Optional and RHSCL repos
 if grep -q 'Red Hat' /etc/redhat-release; then
@@ -143,10 +152,6 @@ sudo chown -R puppet:root /etc/puppetlabs/
 
 ## allow all puppetagents to connect to puppetserver
 echo '*' >> /etc/puppetlabs/puppet/autosign.conf
-
-## ensure r10k > 3.x
-rm -rf /usr/local/bin/r10k
-ln -s /opt/puppetlabs/puppet/bin/r10k /usr/local/bin/r10k
 
 ## reboot to apply above changes
 sudo reboot
