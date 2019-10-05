@@ -12,7 +12,6 @@ HOSTNAME=$(hostname)
 ## local variables
 ##
 CORRECT_PROXY='n'
-PUPPET_PATH='/opt/puppetlabs/bin'
 
 ##
 ## prompt proxy configurations
