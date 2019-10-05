@@ -7,15 +7,12 @@ FOREMAN='1.23.0'
 RUBY_VERSION='2.6.0'
 FOREMAN_SHORT="${FOREMAN%.*}"
 HOSTNAME=$(hostname)
-
-##
-## local variables
-##
-CORRECT_PROXY='n'
+PUPPET_PATH='/opt/puppetlabs/puppet/bin'
 
 ##
 ## prompt proxy configurations
 ##
+CORRECT_PROXY='n'
 read -rp 'Setup proxy > ' SETUP_PROXY
 if [ "${SETUP_PROXY,,}" == 'y' ] && \
     [ "${SETUP_PROXY,,}" == 'yes' ] && \
@@ -172,14 +169,27 @@ echo 'Foreman installed.'
 sudo chown -R puppet:root /etc/puppetlabs/
 
 ##
-## install r10k
-##
-/opt/puppetlabs/puppet/bin/gem install r10k
-
-##
 ## allow all puppetagents to connect to puppetserver
 ##
 echo '*' >> /etc/puppetlabs/puppet/autosign.conf
+
+##
+## install r10k
+##
+## Note: older gem is also installed with ruby.
+##
+"${PUPPET_PATH}/gem" install r10k
+
+##
+## update path: will exists after reboot and within
+##     current subshell, or duration of script.
+##
+if [[ ":$PATH:" != *":$PUPPET_PATH:"* ]]; then
+    NEW_PATH="${PATH}:${PUPPET_PATH}"
+    export PATH=NEW_PATH
+    echo "export PATH='$NEW_PATH'" >> ~/.bashrc
+    . ~/.bashrc
+fi
 
 ##
 ## reboot to apply above changes
