@@ -7,7 +7,7 @@ FOREMAN='1.23.0'
 RUBY_VERSION='2.6.0'
 FOREMAN_SHORT="${FOREMAN%.*}"
 HOSTNAME=$(hostname)
-r10k_PATH='/opt/puppetlabs/puppet/bin'
+PUPPET_PATH='/opt/puppetlabs/puppet/bin'
 
 ##
 ## prompt proxy configurations
@@ -176,14 +176,16 @@ echo '*' >> /etc/puppetlabs/puppet/autosign.conf
 ##
 ## install r10k
 ##
+## Note: older gem is also installed with ruby.
+##
 "${PUPPET_PATH}/gem" install r10k
 
 ##
 ## update path: will exists after reboot and within
 ##     current subshell, or duration of script.
 ##
-if [[ ":$PATH:" != *":$r10k_PATH:"* ]]; then
-    NEW_PATH="${PATH}:${r10k_PATH}"
+if [[ ":$PATH:" != *":$PUPPET_PATH:"* ]]; then
+    NEW_PATH="${PATH}:${PUPPET_PATH}"
     export PATH=NEW_PATH
     echo "export PATH='$NEW_PATH'" >> ~/.bashrc
     . ~/.bashrc
