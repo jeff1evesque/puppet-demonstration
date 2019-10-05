@@ -1,17 +1,21 @@
 #!/bin/bash -i
 
+##
 ## variables
+##
 FOREMAN='1.23.0'
 RUBY_VERSION='2.6.0'
 FOREMAN_SHORT="${FOREMAN%.*}"
 HOSTNAME=$(hostname)
 
+##
 ## local variables
+##
 CORRECT_PROXY='n'
-PUPPET_PATH='/opt/puppetlabs/bin'
-R10K_PATH='/usr/local/bin'
 
+##
 ## prompt proxy configurations
+##
 read -rp 'Setup proxy > ' SETUP_PROXY
 if [ "${SETUP_PROXY,,}" == 'y' ] && \
     [ "${SETUP_PROXY,,}" == 'yes' ] && \
@@ -46,7 +50,9 @@ if [ "${SETUP_PROXY,,}" == 'y' ] && \
     fi
 fi
 
+##
 ## prompt foreman version
+##
 CORRECT_FOREMAN='n'
 while [ "${CORRECT_FOREMAN,,}" != 'y' ] && \
     [ "${CORRECT_FOREMAN,,}" != 'yes' ] && \
@@ -63,25 +69,23 @@ while [ "${CORRECT_FOREMAN,,}" != 'y' ] && \
     fi
 done
 
-## install ruby + r10k
+##
+## ruby: required for puppet
+##
 sudo yum update -y
 sudo yum install -y curl gpg gcc gcc-c++ make
-sudo gpg --keyserver hkp://pool.sks-keyservers.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
+sudo gpg \
+    --keyserver hkp://pool.sks-keyservers.net \
+    --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
 curl -sSL https://get.rvm.io | sudo bash -s stable
-sudo usermod -a -G rvm `whoami`
+sudo usermod -a -G rvm "$(whoami)"
 
 rvm install "ruby-${RUBY_VERSION}"
 rvm --default use "ruby-${RUBY_VERSION}"
-gem install r10k rake
 
-## add puppet + r10k to path
-PATH_PATTERN="${PATH}:${PUPPET_PATH}:${R10K_PATH}"
-if grep -xq "$PATH_PATTERN" ~/.bashrc; then
-    export PATH="$PATH_PATTERN"
-    echo "export PATH='$PATH_PATTERN'" >> ~/.bashrc
-fi  
-
+##
 ## enable RHEL Optional and RHSCL repos
+##
 if grep -q 'Red Hat' /etc/redhat-release; then
     yum-config-manager --enable rhel-7-server-optional-rpms rhel-server-rhscl-7-rpms
     echo 'installed rhel optional repos'
@@ -98,30 +102,41 @@ sudo yum-config-manager --enable \
 sudo yum install -y mod_passenger || sudo yum-config-manager --enable cr \
     && sudo yum install -y mod_passenger
 
+##
 ## install puppet6x
+##
 rpm -Uvh https://yum.puppet.com/puppet6-release-el-7.noarch.rpm
 yum install -y puppet-agent
 echo 'puppet 6x installed'
 
+##
 ## enable epel and foreman repositories
+##
 rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 yum -y install "http://yum.theforeman.org/releases/$FOREMAN_SHORT/el7/x86_64/foreman-release.rpm"
 echo 'epel and foreman repositories enabled.'
 
+##
 ## download + run foreman installer
+##
 yum -y install foreman-installer
 foreman-installer
 
+##
 ## configure foreman hostname
+##
 sed -i "1s/.*/127.0.0.1	$HOSTNAME/"	/etc/hosts
 sed -i "1s/.*/$HOSTNAME/" /etc/hostname
 hostnamectl set-hostname "$HOSTNAME"
 echo "Configured hostname to $HOSTNAME"
 
+##
 ## clean metadata, and clean presto
+##
 yum clean all
 echo 'Cleaned metadata, and presto.'
 
+##
 ## ensure proper firewalld rules
 ##
 ## Note: https://theforeman.org/manuals/1.9/#firewall-configuration
@@ -140,18 +155,33 @@ firewall-cmd --reload
 firewall-cmd --zone=public --list-all
 echo 'Firewalld rules implemented.'
 
+##
 ## allow selinux rule for httpd
+##
 sudo setsebool -P httpd_read_user_content 1
 
+##
 ## install foreman
+##
 foreman-installer
 echo 'Foreman installed.'
 
+##
 ## ensure ownership
+##
 sudo chown -R puppet:root /etc/puppetlabs/
 
+##
+## install r10k
+##
+/opt/puppetlabs/puppet/bin/gem install r10k
+
+##
 ## allow all puppetagents to connect to puppetserver
+##
 echo '*' >> /etc/puppetlabs/puppet/autosign.conf
 
+##
 ## reboot to apply above changes
+##
 sudo reboot
