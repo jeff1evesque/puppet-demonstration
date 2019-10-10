@@ -7,7 +7,6 @@ HOSTNAME=$(hostname)
 ## local variables
 CORRECT_PROXY='n'
 PUPPET_PATH='/opt/puppetlabs/bin'
-R10K_PATH='/usr/local/bin'
 
 ## prompt proxy configurations
 read -rp 'Setup proxy > ' SETUP_PROXY
@@ -68,8 +67,8 @@ gem install r10k -v 2.1.1
 gem install rake -v 12.3.1
 
 ## add puppet + r10k to path
-export PATH="$PATH:$PUPPET_PATH:$R10K_PATH"
-echo "export PATH='$PATH:$PUPPET_PATH:$R10K_PATH'" >> ~/.bashrc
+export PATH="$PATH:$PUPPET_PATH"
+echo "export PATH='$PATH:$PUPPET_PATH'" >> ~/.bashrc
 
 ## enable RHEL Optional and RHSCL repos
 if grep -q 'Red Hat' /etc/redhat-release; then
