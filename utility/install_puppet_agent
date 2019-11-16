@@ -72,7 +72,7 @@ shopt -s nullglob
 CORRECT_HOST='n'
 
 ## prompt host fqdn and ip
-if [ "$VERBOSE" ]; then
+if [ ! "$VERBOSE" ]; then
     while [ "${CORRECT_HOST,,}" != 'y' ] && \
         [ "${CORRECT_HOST,,}" != 'yes' ] && \
         [ "${CORRECT_HOST,,}" != 'true' ] && \
@@ -111,7 +111,7 @@ PROXY_IP='null'
 PROXY_PORT='null'
 
 ## prompt proxy configurations
-if [ "$VERBOSE" ]; then
+if [ ! "$VERBOSE" ]; then
     while [ "${CORRECT_PROXY,,}" != 'y' ] && \
         [ "${CORRECT_PROXY,,}" != 'yes' ] && \
         [ "${CORRECT_PROXY,,}" != 'true' ] && \
@@ -184,7 +184,7 @@ else
 fi
 
 ## assign puppet agent configuration
-if [ "$VERBOSE" ]; then
+if [ ! "$VERBOSE" ]; then
     ## verify submission
     echo "Your puppet environment: $PUPPET_ENVIRONMENT"
     read -rp 'Is this correct (y) > ' CORRECT_ENVIRONMENT

@@ -27,7 +27,7 @@ done
 ##
 ## prompt proxy configurations
 ##
-if [ "$VERBOSE" ]; then
+if [ ! "$VERBOSE" ]; then
     CORRECT_PROXY='n'
     read -rp 'Setup proxy > ' SETUP_PROXY
     if [ "${SETUP_PROXY,,}" == 'y' ] && \
