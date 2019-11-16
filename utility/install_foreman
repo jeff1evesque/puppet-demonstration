@@ -10,61 +10,78 @@ HOSTNAME=$(hostname)
 PUPPET_PATH='/opt/puppetlabs/puppet/bin'
 
 ##
+## cli arguments: optional
+##
+for i in "$@"; do
+    case $i in
+        -v=*|--verbose=*)
+        VERBOSE="${i#*=}"
+        ;;
+
+        *)
+        VERBOSE=false
+        ;;
+    esac
+done
+
+##
 ## prompt proxy configurations
 ##
-CORRECT_PROXY='n'
-read -rp 'Setup proxy > ' SETUP_PROXY
-if [ "${SETUP_PROXY,,}" == 'y' ] && \
-    [ "${SETUP_PROXY,,}" == 'yes' ] && \
-    [ "${SETUP_PROXY,,}" == 'true' ] && \
-    [ "${SETUP_PROXY,,}" == 'ok' ]; then
+if [ "$VERBOSE" ]; then
+    CORRECT_PROXY='n'
+    read -rp 'Setup proxy > ' SETUP_PROXY
+    if [ "${SETUP_PROXY,,}" == 'y' ] && \
+        [ "${SETUP_PROXY,,}" == 'yes' ] && \
+        [ "${SETUP_PROXY,,}" == 'true' ] && \
+        [ "${SETUP_PROXY,,}" == 'ok' ]; then
 
-    while [ "${CORRECT_PROXY,,}" != 'y' ] && \
-        [ "${CORRECT_PROXY,,}" != 'yes' ] && \
-        [ "${CORRECT_PROXY,,}" != 'true' ] && \
-        [ "${CORRECT_PROXY,,}" != 'ok' ]; do
+        while [ "${CORRECT_PROXY,,}" != 'y' ] && \
+            [ "${CORRECT_PROXY,,}" != 'yes' ] && \
+            [ "${CORRECT_PROXY,,}" != 'true' ] && \
+            [ "${CORRECT_PROXY,,}" != 'ok' ]; do
 
-        ## acquire proxy ip
-        read -rp 'Enter your proxy ip > ' PROXY_IP
+            ## acquire proxy ip
+            read -rp 'Enter your proxy ip > ' PROXY_IP
 
-        ## acquire proxy port
-        read -rp 'Enter your proxy port > ' PROXY_PORT
+            ## acquire proxy port
+            read -rp 'Enter your proxy port > ' PROXY_PORT
 
-        ## verify submission
-        echo "Your proxy: $PROXY_IP:$PROXY_PORT"
-        read -rp 'Is this correct (y) > ' CORRECT_PROXY
-    done
+            ## verify submission
+            echo "Your proxy: $PROXY_IP:$PROXY_PORT"
+            read -rp 'Is this correct (y) > ' CORRECT_PROXY
+        done
 
-    ## setup proxy
-    if [ "$PROXY_IP" ] && [ "$PROXY_PORT" ]; then
-        ## lasts until reboot
-        export "http_proxy=http://$PROXY_IP:$PROXY_PORT"
-        export "https_proxy=https://$PROXY_IP:$PROXY_PORT"
+        ## setup proxy
+        if [ "$PROXY_IP" ] && [ "$PROXY_PORT" ]; then
+            ## lasts until reboot
+            export "http_proxy=http://$PROXY_IP:$PROXY_PORT"
+            export "https_proxy=https://$PROXY_IP:$PROXY_PORT"
 
-        ## persistent after reboot
-        echo "http_proxy=http://$PROXY_IP:$PROXY_PORT" >> /etc/environment
-        echo "https_proxy=https://$PROXY_IP:$PROXY_PORT" >> /etc/environment
+            ## persistent after reboot
+            echo "http_proxy=http://$PROXY_IP:$PROXY_PORT" >> /etc/environment
+            echo "https_proxy=https://$PROXY_IP:$PROXY_PORT" >> /etc/environment
+        fi
     fi
-fi
 
-##
-## prompt foreman version
-##
-CORRECT_FOREMAN='n'
-while [ "${CORRECT_FOREMAN,,}" != 'y' ] && \
-    [ "${CORRECT_FOREMAN,,}" != 'yes' ] && \
-    [ "${CORRECT_FOREMAN,,}" != 'true' ] && \
-    [ "${CORRECT_FOREMAN,,}" != 'ok' ]; do
-
-    read -rp "Install foreman $FOREMAN (y) > " CORRECT_FOREMAN
-
-    if [ "${CORRECT_FOREMAN,,}" != 'y' ] && \
+    ##
+    ## prompt foreman version
+    ##
+    CORRECT_FOREMAN='n'
+    while [ "${CORRECT_FOREMAN,,}" != 'y' ] && \
         [ "${CORRECT_FOREMAN,,}" != 'yes' ] && \
         [ "${CORRECT_FOREMAN,,}" != 'true' ] && \
-        [ "${CORRECT_FOREMAN,,}" != 'ok' ]; then
-        read -rp "Enter desired foreman version (i.e. '$FOREMAN', or 'latest') > " FOREMAN
-    fi
-done
+        [ "${CORRECT_FOREMAN,,}" != 'ok' ]; do
+
+        read -rp "Install foreman $FOREMAN (y) > " CORRECT_FOREMAN
+
+        if [ "${CORRECT_FOREMAN,,}" != 'y' ] && \
+            [ "${CORRECT_FOREMAN,,}" != 'yes' ] && \
+            [ "${CORRECT_FOREMAN,,}" != 'true' ] && \
+            [ "${CORRECT_FOREMAN,,}" != 'ok' ]; then
+            read -rp "Enter desired foreman version (i.e. '$FOREMAN', or 'latest') > " FOREMAN
+        fi
+    done
+fi
 
 ##
 ## ruby: required for puppet
