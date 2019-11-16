@@ -184,7 +184,7 @@ else
 fi
 
 ## assign puppet agent configuration
-if [ "$VERBOSE" ]; then;
+if [ "$VERBOSE" ]; then
     ## verify submission
     echo "Your puppet environment: $PUPPET_ENVIRONMENT"
     read -rp 'Is this correct (y) > ' CORRECT_ENVIRONMENT
