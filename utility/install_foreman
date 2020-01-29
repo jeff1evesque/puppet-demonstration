@@ -8,6 +8,7 @@ RUBY_VERSION='2.6.0'
 FOREMAN_SHORT="${FOREMAN%.*}"
 HOSTNAME=$(hostname)
 PUPPET_PATH='/opt/puppetlabs/puppet/bin'
+VERBOSE=false
 
 ##
 ## cli arguments: optional
@@ -19,7 +20,7 @@ for i in "$@"; do
         ;;
 
         *)
-        VERBOSE=false
+        echo "ERROR: ${i} is not a valid option"
         ;;
     esac
 done
@@ -27,7 +28,7 @@ done
 ##
 ## prompt proxy configurations
 ##
-if [ ! "$VERBOSE" ]; then
+if [ "$VERBOSE" ]; then
     CORRECT_PROXY='n'
     read -rp 'Setup proxy > ' SETUP_PROXY
     if [ "${SETUP_PROXY,,}" == 'y' ] && \
