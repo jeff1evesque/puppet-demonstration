@@ -15,27 +15,40 @@ PUPPET_ENVIRONMENT='production'
 PUPPET_6_RPM='puppet6-release-el-6.noarch'
 PUPPET_7_RPM='puppet6-release-el-7.noarch'
 PUPPET_PATH='/opt/puppetlabs/bin'
-VERBOSE=false
+PROMPT=false
+RESTART=false
 
 ##
 ## cli arguments: optional
 ##
 for i in "$@"; do
     case $i in
-        -v=*|--verbose=*)
-        VERBOSE="${i#*=}"
+        -p=*|--prompt=*)
+        PROMPT="${i#*=}"
         ;;
 
-        -h=*|--host=*)
+        -fqdn=*|--host-fqdn=*)
         HOST_FQDN="${i#*=}"
         ;;
 
-        -i=*|--ip=*)
+        -hip=*|--host-ip=*)
         HOST_IP="${i#*=}"
+        ;;
+
+        -pip=*|--proxy-ip=*)
+        PROXY_IP="${i#*=}"
+        ;;
+
+        -pp=*|--proxy-port=*)
+        PROXY_PORT="${i#*=}"
         ;;
 
         -e=*|--environment=*)
         PUPPET_ENVIRONMENT="${i#*=}"
+        ;;
+
+        -r=*|--restart-network=*)
+        RESTART="${i#*=}"
         ;;
 
         *)
@@ -44,7 +57,7 @@ for i in "$@"; do
     esac
 done
 
-if [ "$VERBOSE" = 'true' ] &&
+if [ "$PROMPT" = 'true' ] &&
   [[ -z "${HOST_FQDN+x}" ]] ||
   [[ -z "${HOST_IP+x}" ]] ||
   [[ -z "${PUPPET_ENVIRONMENT+x}" ]];
@@ -67,17 +80,25 @@ else
     sudo apt-get install -y wget
 fi
 
+##
 ## custom function
+##
 exists() { [[ -e $1 ]]; }
 
+##
 ## enable nullglob
+##
 shopt -s nullglob
 
+##
 ## local variables
+##
 CORRECT_HOST='n'
 
+##
 ## prompt host fqdn and ip
-if [ ! "$VERBOSE" ]; then
+##
+if [ "$PROMPT" = 'true' ]; then
     while [ "${CORRECT_HOST,,}" != 'y' ] && \
         [ "${CORRECT_HOST,,}" != 'yes' ] && \
         [ "${CORRECT_HOST,,}" != 'true' ] && \
@@ -96,7 +117,9 @@ if [ ! "$VERBOSE" ]; then
     done
 fi
 
+##
 ## get hostname + centos parameters
+##
 if [ -f /etc/lsb-release ]; then
     HOSTNAME=$(hostname)
 else
@@ -115,14 +138,15 @@ CORRECT_PROXY='n'
 PROXY_IP='null'
 PROXY_PORT='null'
 
+##
 ## prompt proxy configurations
-if [ ! "$VERBOSE" ]; then
+##
+if [ "$PROMPT" = 'true' ]; then
     while [ "${CORRECT_PROXY,,}" != 'y' ] && \
         [ "${CORRECT_PROXY,,}" != 'yes' ] && \
         [ "${CORRECT_PROXY,,}" != 'true' ] && \
         [ "${CORRECT_PROXY,,}" != 'ok' ]; do
 
-        ## verify submission
         echo "Your proxy: $PROXY_IP:$PROXY_PORT"
         read -rp 'Is this correct (y) > ' CORRECT_PROXY
 
@@ -133,30 +157,33 @@ if [ ! "$VERBOSE" ]; then
                 break
         fi
 
-        ## acquire proxy ip
         read -rp 'Enter your proxy ip > ' PROXY_IP
-
-        ## acquire proxy port
         read -rp 'Enter your proxy port > ' PROXY_PORT
-
-        ## setup proxy
-        if [ -n "${PROXY_IP+x}" ] && [ -n "${PROXY_PORT+x}" ]; then
-            ## lasts until reboot
-            export http_proxy=http://"$PROXY_IP:$PROXY_PORT"
-            export https_proxy=https://"$PROXY_IP:$PROXY_PORT"
-
-            ## persistent after reboot
-            sudo sh -c "echo \"http_proxy=http://$PROXY_IP:$PROXY_PORT\" >> /etc/environment"
-            sudo sh -c "echo \"https_proxy=https://$PROXY_IP:$PROXY_PORT\" >> /etc/environment"
-        fi
     done
 fi
 
+##
+## setup proxy
+##
+if [ -n "${PROXY_IP+x}" ] && [ -n "${PROXY_PORT+x}" ]; then
+    ## lasts until reboot
+    export http_proxy=http://"$PROXY_IP:$PROXY_PORT"
+    export https_proxy=https://"$PROXY_IP:$PROXY_PORT"
+
+    ## persistent after reboot
+    sudo sh -c "echo \"http_proxy=http://$PROXY_IP:$PROXY_PORT\" >> /etc/environment"
+    sudo sh -c "echo \"https_proxy=https://$PROXY_IP:$PROXY_PORT\" >> /etc/environment"
+fi
+
+##
 ## add puppet to path
+##
 export PATH="$PATH:$PUPPET_PATH"
 echo "export PATH='$PATH:$PUPPET_PATH'" >> ~/.bashrc
 
+##
 ## disable nullglob
+##
 shopt -u nullglob
 
 if [ -f /etc/lsb-release ]; then
@@ -188,8 +215,10 @@ else
     echo 'Puppet agent installed.'
 fi
 
+##
 ## assign puppet agent configuration
-if [ ! "$VERBOSE" ]; then
+##
+if [ "$PROMPT" = 'true' ]; then
     ## verify submission
     echo "Your puppet environment: $PUPPET_ENVIRONMENT"
     read -rp 'Is this correct (y) > ' CORRECT_ENVIRONMENT
@@ -210,13 +239,15 @@ if [ ! "$VERBOSE" ]; then
 
 fi
 
-## create puppet environment directory
+##
+## configure environment
+##
 sudo mkdir -p "/etc/puppetlabs/code/environments/$PUPPET_ENVIRONMENT"
-
-## set puppet environment
 sudo /opt/puppetlabs/bin/puppet config set environment "$PUPPET_ENVIRONMENT"
 
+##
 ## default search domain
+##
 LOCAL_FQDN="$HOSTNAME"
 
 ##
@@ -227,9 +258,17 @@ LOCAL_FQDN="$HOSTNAME"
 ##
 sudo sh -c "sed -i \"/127.0.0.1/s/$/	$LOCAL_FQDN/\" /etc/hosts"
 printf '%s %s\n' "$HOST_IP" "$HOST_FQDN" | sudo tee -a /etc/hosts
-sudo ifdown eth0 && sudo ifup eth0
 
+##
+## reboot to apply above changes
+##
+if [[ "$RESTART" = 'true' ]]; then
+    sudo ifdown eth0 && sudo ifup eth0
+fi
+
+##
 ## assign puppet agent configuration
+##
 sudo /opt/puppetlabs/bin/puppet config set server "$HOST_FQDN"
 sudo /opt/puppetlabs/bin/puppet config set certname "$LOCAL_FQDN"
 
@@ -240,5 +279,5 @@ sudo /opt/puppetlabs/bin/puppet config set certname "$LOCAL_FQDN"
 ##       from connecting with the puppetserver.
 ##
 if [ -f /etc/puppetlabs/puppet/ssl ]; then
-    sudo mv /etc/puppetlabs/puppet/ssl /etc/puppetlabs/puppet/ssl.bk
+    sudo mv -f /etc/puppetlabs/puppet/ssl /etc/puppetlabs/puppet/ssl.bk
 fi
