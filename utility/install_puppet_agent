@@ -63,8 +63,8 @@ for i in "$@"; do
 done
 
 if [ "$PROMPT" = 'true' ] &&
-  [ "$HOST_FQDN" != 'null' ]] ||
-  [ "$HOST_IP" != 'null' ]];
+  [ "$HOST_FQDN" != 'null' ] ||
+  [ "$HOST_IP" != 'null' ];
 then
     echo 'Please provide --host, --ip, and --environment when using verbose mode'
 fi
