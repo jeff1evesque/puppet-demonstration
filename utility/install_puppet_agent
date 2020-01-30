@@ -43,7 +43,11 @@ for i in "$@"; do
     esac
 done
 
-if [ "$VERBOSE" ] and [ [ "${HOST_FQDN+'null'}" = 'null'] || [ "${HOST_IP+'null'}" = 'null' ] || [ "${PUPPET_ENVIRONMENT+'null'}" = 'null' ] ]; then
+if [ "$VERBOSE" ] &&
+  [[ -z "${HOST_FQDN+x}" ]] ||
+  [[ -z "${HOST_IP+x}" ]] ||
+  [[ -z "${PUPPET_ENVIRONMENT+x}" ]];
+then
     echo 'Please provide --host, --ip, and --environment when using verbose mode'
 fi
 
