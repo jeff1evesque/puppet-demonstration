@@ -9,6 +9,7 @@ FOREMAN_SHORT="${FOREMAN%.*}"
 HOSTNAME=$(hostname)
 PUPPET_PATH='/opt/puppetlabs/puppet/bin'
 VERBOSE=false
+REBOOT=false
 
 ##
 ## cli arguments: optional
@@ -17,6 +18,10 @@ for i in "$@"; do
     case $i in
         -v=*|--verbose=*)
         VERBOSE="${i#*=}"
+        ;;
+
+        -r=*|--reboot=*)
+        REBOOT="${i#*=}"
         ;;
 
         *)
@@ -212,4 +217,6 @@ fi
 ##
 ## reboot to apply above changes
 ##
-sudo reboot
+if [[ "$REBOOT" ]]; then
+    sudo reboot
+fi
