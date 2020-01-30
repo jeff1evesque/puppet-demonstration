@@ -8,7 +8,7 @@ RUBY_VERSION='2.6.0'
 FOREMAN_SHORT="${FOREMAN%.*}"
 HOSTNAME=$(hostname)
 PUPPET_PATH='/opt/puppetlabs/puppet/bin'
-VERBOSE=false
+PROMPT=false
 REBOOT=false
 
 ##
@@ -16,8 +16,25 @@ REBOOT=false
 ##
 for i in "$@"; do
     case $i in
-        -v=*|--verbose=*)
-        VERBOSE="${i#*=}"
+        -p=*|--prompt=*)
+        PROMPT="${i#*=}"
+        ;;
+
+        -ip=*|--proxy-ip=*)
+        PROXY_IP="${i#*=}"
+        ;;
+
+        -port=*|--proxy-port=*)
+        PROXY_PORT="${i#*=}"
+        ;;
+
+        -foreman=*|--foreman-version=*)
+        FOREMAN="${i#*=}"
+        FOREMAN_SHORT="${FOREMAN%.*}"
+        ;;
+
+        -ruby=*|--ruby-version=*)
+        RUBY_VERSION="${i#*=}"
         ;;
 
         -r=*|--reboot=*)
@@ -33,7 +50,7 @@ done
 ##
 ## prompt proxy configurations
 ##
-if [ "$VERBOSE" ]; then
+if [[ "$PROMPT" = true ]]; then
     CORRECT_PROXY='n'
     read -rp 'Setup proxy > ' SETUP_PROXY
     if [ "${SETUP_PROXY,,}" == 'y' ] && \
@@ -56,17 +73,6 @@ if [ "$VERBOSE" ]; then
             echo "Your proxy: $PROXY_IP:$PROXY_PORT"
             read -rp 'Is this correct (y) > ' CORRECT_PROXY
         done
-
-        ## setup proxy
-        if [ "$PROXY_IP" ] && [ "$PROXY_PORT" ]; then
-            ## lasts until reboot
-            export "http_proxy=http://$PROXY_IP:$PROXY_PORT"
-            export "https_proxy=https://$PROXY_IP:$PROXY_PORT"
-
-            ## persistent after reboot
-            echo "http_proxy=http://$PROXY_IP:$PROXY_PORT" >> /etc/environment
-            echo "https_proxy=https://$PROXY_IP:$PROXY_PORT" >> /etc/environment
-        fi
     fi
 
     ##
@@ -87,6 +93,19 @@ if [ "$VERBOSE" ]; then
             read -rp "Enter desired foreman version (i.e. '$FOREMAN', or 'latest') > " FOREMAN
         fi
     done
+fi
+
+##
+## setup proxy
+##
+if [ "$PROXY_IP" ] && [ "$PROXY_PORT" ]; then
+    ## lasts until reboot
+    export "http_proxy=http://$PROXY_IP:$PROXY_PORT"
+    export "https_proxy=https://$PROXY_IP:$PROXY_PORT"
+
+    ## persistent after reboot
+    echo "http_proxy=http://$PROXY_IP:$PROXY_PORT" >> /etc/environment
+    echo "https_proxy=https://$PROXY_IP:$PROXY_PORT" >> /etc/environment
 fi
 
 ##
@@ -217,6 +236,6 @@ fi
 ##
 ## reboot to apply above changes
 ##
-if [[ "$REBOOT" ]]; then
+if [[ "$REBOOT" = 'true' ]]; then
     sudo reboot
 fi
