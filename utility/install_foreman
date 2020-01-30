@@ -22,6 +22,7 @@ for i in "$@"; do
 
         -r=*|--reboot=*)
         REBOOT="${i#*=}"
+        ;;
 
         *)
         echo "ERROR: ${i} is not a valid option"
