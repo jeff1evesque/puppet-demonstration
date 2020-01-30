@@ -9,6 +9,7 @@ FOREMAN_SHORT="${FOREMAN%.*}"
 HOSTNAME=$(hostname)
 PUPPET_PATH='/opt/puppetlabs/puppet/bin'
 VERBOSE=false
+REBOOT=false
 
 ##
 ## cli arguments: optional
@@ -18,6 +19,9 @@ for i in "$@"; do
         -v=*|--verbose=*)
         VERBOSE="${i#*=}"
         ;;
+
+        -r=*|--reboot=*)
+        REBOOT="${i#*=}"
 
         *)
         echo "ERROR: ${i} is not a valid option"
@@ -212,4 +216,6 @@ fi
 ##
 ## reboot to apply above changes
 ##
-sudo reboot
+if [[ "$REBOOT" ]]; then
+    sudo reboot
+fi
