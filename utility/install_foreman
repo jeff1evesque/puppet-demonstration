@@ -10,6 +10,8 @@ HOSTNAME=$(hostname)
 PUPPET_PATH='/opt/puppetlabs/puppet/bin'
 PROMPT=false
 REBOOT=false
+PROXY_IP='null'
+PROXY_PORT='null'
 
 ##
 ## cli arguments: optional
@@ -98,7 +100,7 @@ fi
 ##
 ## setup proxy
 ##
-if [ "$PROXY_IP" ] && [ "$PROXY_PORT" ]; then
+if [ "$PROXY_IP" != 'null' ] && [ "$PROXY_PORT" != 'null' ]; then
     ## lasts until reboot
     export "http_proxy=http://$PROXY_IP:$PROXY_PORT"
     export "https_proxy=https://$PROXY_IP:$PROXY_PORT"
@@ -236,6 +238,6 @@ fi
 ##
 ## reboot to apply above changes
 ##
-if [[ "$REBOOT" = 'true' ]]; then
+if [ "$REBOOT" = 'true' ]; then
     sudo reboot
 fi

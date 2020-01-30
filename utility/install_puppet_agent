@@ -17,6 +17,11 @@ PUPPET_7_RPM='puppet6-release-el-7.noarch'
 PUPPET_PATH='/opt/puppetlabs/bin'
 PROMPT=false
 RESTART=false
+PROXY_IP='null'
+PROXY_PORT='null'
+HOST_IP='null'
+HOST_FQDN='null'
+
 
 ##
 ## cli arguments: optional
@@ -58,9 +63,8 @@ for i in "$@"; do
 done
 
 if [ "$PROMPT" = 'true' ] &&
-  [[ -z "${HOST_FQDN+x}" ]] ||
-  [[ -z "${HOST_IP+x}" ]] ||
-  [[ -z "${PUPPET_ENVIRONMENT+x}" ]];
+  [ "$HOST_FQDN" != 'null' ]] ||
+  [ "$HOST_IP" != 'null' ]];
 then
     echo 'Please provide --host, --ip, and --environment when using verbose mode'
 fi
@@ -91,13 +95,10 @@ exists() { [[ -e $1 ]]; }
 shopt -s nullglob
 
 ##
-## local variables
+## prompt host fqdn and ip
 ##
 CORRECT_HOST='n'
 
-##
-## prompt host fqdn and ip
-##
 if [ "$PROMPT" = 'true' ]; then
     while [ "${CORRECT_HOST,,}" != 'y' ] && \
         [ "${CORRECT_HOST,,}" != 'yes' ] && \
@@ -135,8 +136,6 @@ fi
 ##
 ## prompt proxy configurations
 CORRECT_PROXY='n'
-PROXY_IP='null'
-PROXY_PORT='null'
 
 ##
 ## prompt proxy configurations
@@ -165,7 +164,7 @@ fi
 ##
 ## setup proxy
 ##
-if [ -n "${PROXY_IP+x}" ] && [ -n "${PROXY_PORT+x}" ]; then
+if [ "$PROXY_IP" != 'null' ] && [ "$PROXY_PORT" != 'null' ]; then
     ## lasts until reboot
     export http_proxy=http://"$PROXY_IP:$PROXY_PORT"
     export https_proxy=https://"$PROXY_IP:$PROXY_PORT"
@@ -262,7 +261,7 @@ printf '%s %s\n' "$HOST_IP" "$HOST_FQDN" | sudo tee -a /etc/hosts
 ##
 ## reboot to apply above changes
 ##
-if [[ "$RESTART" = 'true' ]]; then
+if [ "$RESTART" = 'true' ]; then
     sudo ifdown eth0 && sudo ifup eth0
 fi
 
