@@ -15,6 +15,7 @@ PUPPET_ENVIRONMENT='production'
 PUPPET_6_RPM='puppet6-release-el-6.noarch'
 PUPPET_7_RPM='puppet6-release-el-7.noarch'
 PUPPET_PATH='/opt/puppetlabs/bin'
+VERBOSE=false
 
 ##
 ## cli arguments: optional
@@ -43,7 +44,7 @@ for i in "$@"; do
     esac
 done
 
-if [ "$VERBOSE" ] &&
+if [ "$VERBOSE" = 'true' ] &&
   [[ -z "${HOST_FQDN+x}" ]] ||
   [[ -z "${HOST_IP+x}" ]] ||
   [[ -z "${PUPPET_ENVIRONMENT+x}" ]];
