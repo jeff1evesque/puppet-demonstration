@@ -90,7 +90,7 @@ Vagrant.configure(2) do |config|
     SHELL
 
     ## shell provision: install foreman (with puppetserver)
-    puppetserver.vm.provision :shell, path: 'utility/install_foreman'
+    puppetserver.vm.provision :shell, path: 'utility/install_foreman', args: ['--prompt=true']
 
     ## ensure foreman on successive reboot
     ##
@@ -164,7 +164,7 @@ Vagrant.configure(2) do |config|
         sudo yum install -y dos2unix
         dos2unix /vagrant/utility/*
       SHELL
-      puppetagent.vm.provision :shell, path: 'utility/install_puppet_agent'
+      puppetagent.vm.provision :shell, path: 'utility/install_puppet_agent', args: ['--prompt=true']
 
     elsif ENV['AGENT_ENV'] == 'Trusty64'
 
