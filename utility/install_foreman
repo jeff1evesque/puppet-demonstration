@@ -230,7 +230,7 @@ echo '*' >> /etc/puppetlabs/puppet/autosign.conf
 ##
 if [[ ":$PATH:" != *":$PUPPET_PATH:"* ]]; then
     NEW_PATH="${PATH}:${PUPPET_PATH}"
-    export PATH=NEW_PATH
+    export PATH="$NEW_PATH"
     echo "export PATH='$NEW_PATH'" >> ~/.bashrc
     . ~/.bashrc
 fi
