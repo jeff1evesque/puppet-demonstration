@@ -22,7 +22,6 @@ PROXY_PORT='null'
 HOST_IP='null'
 HOST_FQDN='null'
 
-
 ##
 ## cli arguments: optional
 ##
@@ -32,19 +31,19 @@ for i in "$@"; do
         PROMPT="${i#*=}"
         ;;
 
-        -fqdn=*|--host-fqdn=*)
+        --host-fqdn=*)
         HOST_FQDN="${i#*=}"
         ;;
 
-        -hip=*|--host-ip=*)
+        --host-ip=*)
         HOST_IP="${i#*=}"
         ;;
 
-        -pip=*|--proxy-ip=*)
+        --proxy-ip=*)
         PROXY_IP="${i#*=}"
         ;;
 
-        -pp=*|--proxy-port=*)
+        --proxy-port=*)
         PROXY_PORT="${i#*=}"
         ;;
 
