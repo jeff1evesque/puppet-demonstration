@@ -28,7 +28,7 @@ HOST_FQDN='null'
 for i in "$@"; do
     case $i in
         --prompt)
-        PROMPT='true'
+        PROMPT=true
         ;;
 
         --host-fqdn=*)
@@ -52,7 +52,7 @@ for i in "$@"; do
         ;;
 
         --restart-network)
-        RESTART='true'
+        RESTART=true
         ;;
 
         *)
