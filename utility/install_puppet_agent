@@ -27,8 +27,8 @@ HOST_FQDN='null'
 ##
 for i in "$@"; do
     case $i in
-        -p=*|--prompt=*)
-        PROMPT="${i#*=}"
+        --prompt)
+        PROMPT=true
         ;;
 
         --host-fqdn=*)
@@ -51,8 +51,8 @@ for i in "$@"; do
         PUPPET_ENVIRONMENT="${i#*=}"
         ;;
 
-        -r=*|--restart-network=*)
-        RESTART="${i#*=}"
+        --restart-network)
+        RESTART=true
         ;;
 
         *)
