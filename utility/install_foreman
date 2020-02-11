@@ -3,13 +3,13 @@
 ##
 ## variables
 ##
-FOREMAN='1.23.0'
+FOREMAN='1.24.0'
 RUBY_VERSION='2.6.0'
 FOREMAN_SHORT="${FOREMAN%.*}"
 HOSTNAME=$(hostname)
 PUPPET_PATH='/opt/puppetlabs/puppet/bin'
-PROMPT=false
-REBOOT=false
+VERBOSE='false'
+REBOOT='false'
 PROXY_IP='null'
 PROXY_PORT='null'
 
@@ -18,8 +18,8 @@ PROXY_PORT='null'
 ##
 for i in "$@"; do
     case $i in
-        -p=*|--prompt=*)
-        PROMPT="${i#*=}"
+        -v|--verbose)
+        VERBOSE='true'
         ;;
 
         -ip=*|--proxy-ip=*)
@@ -39,8 +39,8 @@ for i in "$@"; do
         RUBY_VERSION="${i#*=}"
         ;;
 
-        -r=*|--reboot=*)
-        REBOOT="${i#*=}"
+        -r|--reboot)
+        REBOOT='true'
         ;;
 
         *)
@@ -52,7 +52,7 @@ done
 ##
 ## prompt proxy configurations
 ##
-if [[ "$PROMPT" = true ]]; then
+if [ "$VERBOSE" = true ]; then
     CORRECT_PROXY='n'
     read -rp 'Setup proxy > ' SETUP_PROXY
     if [ "${SETUP_PROXY,,}" == 'y' ] && \
@@ -97,29 +97,27 @@ if [[ "$PROMPT" = true ]]; then
     done
 fi
 
-##
 ## setup proxy
-##
-if [ "$PROXY_IP" != 'null' ] && [ "$PROXY_PORT" != 'null' ]; then
+if [ "$PROXY_IP" != null ] && [ "$PROXY_PORT" != null ]; then
     ## lasts until reboot
-    export "http_proxy=http://$PROXY_IP:$PROXY_PORT"
-    export "https_proxy=https://$PROXY_IP:$PROXY_PORT"
+    export http_proxy="http://${PROXY_IP}:${PROXY_PORT}"
+    export https_proxy="https://$PROXY_IP:$PROXY_PORT"
 
     ## persistent after reboot
-    echo "http_proxy=http://$PROXY_IP:$PROXY_PORT" >> /etc/environment
-    echo "https_proxy=https://$PROXY_IP:$PROXY_PORT" >> /etc/environment
+    echo "http_proxy=http://${PROXY_IP}:${PROXY_PORT}" >> /etc/environment
+    echo "https_proxy=https://${PROXY_IP}:${PROXY_PORT}" >> /etc/environment
 fi
 
 ##
 ## ruby: required for puppet
 ##
-sudo yum update -y
-sudo yum install -y curl gpg gcc gcc-c++ make
-sudo gpg \
+yum update -y
+yum install -y curl gpg gcc gcc-c++ make
+gpg \
     --keyserver hkp://pool.sks-keyservers.net \
     --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
-curl -sSL https://get.rvm.io | sudo bash -s stable
-sudo usermod -a -G rvm "$(whoami)"
+curl -sSL https://get.rvm.io | bash -s stable
+usermod -a -G rvm "$(whoami)"
 
 rvm install "ruby-${RUBY_VERSION}"
 rvm --default use "ruby-${RUBY_VERSION}"
@@ -137,11 +135,11 @@ fi
 ##
 ##     https://github.com/phusion/passenger/issues/1800#issuecomment-407146886
 ##
-sudo yum-config-manager --enable \
+yum-config-manager --enable \
     rhui-REGION-rhel-server-extras \
     rhui-REGION-rhel-server-optional
-sudo yum install -y mod_passenger || sudo yum-config-manager --enable cr \
-    && sudo yum install -y mod_passenger
+yum install -y mod_passenger || yum-config-manager --enable cr \
+    && yum install -y mod_passenger
 
 ##
 ## install puppet6x
@@ -153,7 +151,7 @@ echo 'puppet 6x installed'
 ##
 ## enable epel and foreman repositories
 ##
-rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 yum -y install "http://yum.theforeman.org/releases/$FOREMAN_SHORT/el7/x86_64/foreman-release.rpm"
 echo 'epel and foreman repositories enabled.'
 
@@ -161,7 +159,6 @@ echo 'epel and foreman repositories enabled.'
 ## download + run foreman installer
 ##
 yum -y install foreman-installer
-foreman-installer
 
 ##
 ## configure foreman hostname
@@ -174,43 +171,41 @@ echo "Configured hostname to $HOSTNAME"
 ##
 ## clean metadata, and clean presto
 ##
-yum clean all
-echo 'Cleaned metadata, and presto.'
+yum clean all && echo 'Cleaned metadata, and presto.'
 
 ##
 ## ensure proper firewalld rules
 ##
 ## Note: https://theforeman.org/manuals/1.9/#firewall-configuration
 ##
-sudo yum -y install firewalld
-sudo service firewalld start
-firewall-cmd --permanent --zone=public --add-service=http
-firewall-cmd --permanent --zone=public --add-service=https
-firewall-cmd --permanent --zone=public --add-port=53/tcp
-firewall-cmd --permanent --zone=public --add-port=69/tcp
-firewall-cmd --permanent --zone=public --add-port=80/tcp
-firewall-cmd --permanent --zone=public --add-port=443/tcp
-firewall-cmd --permanent --zone=public --add-port=8140/tcp
-firewall-cmd --permanent --zone=public --add-port=8443/tcp
-firewall-cmd --reload
-firewall-cmd --zone=public --list-all
-echo 'Firewalld rules implemented.'
+yum -y install firewalld
+firewall-offline-cmd --zone=public --add-service=http
+firewall-offline-cmd --zone=public --add-service=https
+firewall-offline-cmd --zone=public --add-port=53/tcp
+firewall-offline-cmd --zone=public --add-port=69/tcp
+firewall-offline-cmd --zone=public --add-port=80/tcp
+firewall-offline-cmd --zone=public --add-port=443/tcp
+firewall-offline-cmd --zone=public --add-port=8140/tcp
+firewall-offline-cmd --zone=public --add-port=8443/tcp
+systemctl enable firewalld
+systemctl start firewalld \
+    && firewall-cmd --zone=public --list-all \
+    && echo 'Firewalld rules implemented.'
 
 ##
 ## allow selinux rule for httpd
 ##
-sudo setsebool -P httpd_read_user_content 1
+setsebool -P httpd_read_user_content 1
 
 ##
 ## install foreman
 ##
-foreman-installer
-echo 'Foreman installed.'
+foreman-installer && echo 'Foreman installed.'
 
 ##
 ## ensure ownership
 ##
-sudo chown -R puppet:root /etc/puppetlabs/
+chown -R puppet:root /etc/puppetlabs/
 
 ##
 ## allow all puppetagents to connect to puppetserver
@@ -239,5 +234,5 @@ fi
 ## reboot to apply above changes
 ##
 if [ "$REBOOT" = 'true' ]; then
-    sudo reboot
+    reboot
 fi
