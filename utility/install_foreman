@@ -12,6 +12,7 @@ VERBOSE='false'
 REBOOT='false'
 PROXY_IP='null'
 PROXY_PORT='null'
+FOREMAN_URL='null'
 
 ##
 ## cli arguments: optional
@@ -33,6 +34,10 @@ for i in "$@"; do
         -foreman=*|--foreman-version=*)
         FOREMAN="${i#*=}"
         FOREMAN_SHORT="${FOREMAN%.*}"
+        ;;
+
+        --foreman-url=*)
+        FOREMAN_URL="${i#*=}"
         ;;
 
         -ruby=*|--ruby-version=*)
@@ -160,7 +165,12 @@ echo 'epel and foreman repositories enabled.'
 ##
 ## download + run foreman installer
 ##
-yum -y install foreman-installer
+if [ "$FOREMAN_URL" != 'null' ]; then
+    yum -y install foreman-installer \
+        --puppet-server-foreman-url="$FOREMAN_URL"
+else
+    yum -y install foreman-installer
+fi
 
 ##
 ## configure foreman hostname
