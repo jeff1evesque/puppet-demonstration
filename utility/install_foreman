@@ -201,7 +201,7 @@ firewall-offline-cmd --zone=public --add-port=8140/tcp
 firewall-offline-cmd --zone=public --add-port=8443/tcp
 systemctl enable firewalld
 systemctl start firewalld \
-    && firewall-cmd --zone=public --list-all \
+    && firewall-cmd --list-all \
     && echo 'Firewalld rules implemented.'
 
 ##
